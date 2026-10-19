@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img" aria-label="足金999 实心麻花手镯 细节图">
+
+  <defs>
+    <linearGradient id="bgb" x1="0.146" y1="0.146" x2="0.854" y2="0.854">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#ede0c4"/>
+    </linearGradient>
+    <linearGradient id="mtb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9c461"/>
+      <stop offset=".45" stop-color="#c9a227"/>
+      <stop offset="1" stop-color="#8a631d"/>
+    </linearGradient>
+    <linearGradient id="ptb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e3e9ef"/>
+      <stop offset=".5" stop-color="#9aa7b4"/>
+      <stop offset="1" stop-color="#6b7885"/>
+    </linearGradient>
+    <radialGradient id="vgb" cx=".5" cy=".42" r=".72">
+      <stop offset=".55" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#8a631d" stop-opacity=".14"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bgb)"/>
+  <rect width="800" height="800" fill="url(#vgb)"/>
+<g transform="translate(400 400) scale(1.18) translate(-400 -400)"><circle cx="400" cy="400" r="200" fill="none" stroke="url(#mtb)" stroke-width="54"/><line x1="576.0" y1="400.0" x2="621.1" y2="435.7" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="573.8" y1="427.5" x2="612.8" y2="469.8" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="567.4" y1="454.4" x2="599.3" y2="502.3" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="556.8" y1="479.9" x2="580.8" y2="532.2" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="542.4" y1="503.5" x2="557.9" y2="558.9" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="524.5" y1="524.5" x2="531.1" y2="581.6" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="503.5" y1="542.4" x2="501.1" y2="599.9" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="479.9" y1="556.8" x2="468.6" y2="613.2" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="454.4" y1="567.4" x2="434.4" y2="621.3" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="427.5" y1="573.8" x2="399.3" y2="624.0" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="400.0" y1="576.0" x2="364.3" y2="621.1" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="372.5" y1="573.8" x2="330.2" y2="612.8" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="345.6" y1="567.4" x2="297.7" y2="599.3" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="320.1" y1="556.8" x2="267.8" y2="580.8" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="296.5" y1="542.4" x2="241.1" y2="557.9" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="275.5" y1="524.5" x2="218.4" y2="531.1" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="257.6" y1="503.5" x2="200.1" y2="501.1" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="243.2" y1="479.9" x2="186.8" y2="468.6" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="232.6" y1="454.4" x2="178.7" y2="434.4" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="226.2" y1="427.5" x2="176.0" y2="399.3" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="224.0" y1="400.0" x2="178.9" y2="364.3" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="226.2" y1="372.5" x2="187.2" y2="330.2" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="232.6" y1="345.6" x2="200.7" y2="297.7" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="243.2" y1="320.1" x2="219.2" y2="267.8" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="257.6" y1="296.5" x2="242.1" y2="241.1" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="275.5" y1="275.5" x2="268.9" y2="218.4" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="296.5" y1="257.6" x2="298.9" y2="200.1" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="320.1" y1="243.2" x2="331.4" y2="186.8" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="345.6" y1="232.6" x2="365.6" y2="178.7" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="372.5" y1="226.2" x2="400.7" y2="176.0" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="400.0" y1="224.0" x2="435.7" y2="178.9" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="427.5" y1="226.2" x2="469.8" y2="187.2" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="454.4" y1="232.6" x2="502.3" y2="200.7" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="479.9" y1="243.2" x2="532.2" y2="219.2" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="503.5" y1="257.6" x2="558.9" y2="242.1" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="524.5" y1="275.5" x2="581.6" y2="268.9" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="542.4" y1="296.5" x2="599.9" y2="298.9" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="556.8" y1="320.1" x2="613.2" y2="331.4" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="567.4" y1="345.6" x2="621.3" y2="365.6" stroke="#fff" stroke-width="7" opacity=".32"/><line x1="573.8" y1="372.5" x2="624.0" y2="400.7" stroke="#fff" stroke-width="7" opacity=".32"/></g>
+
+  <g font-family="'PingFang SC','Helvetica Neue',Arial,sans-serif">
+    <text x="56" y="722" font-size="30" fill="#8a631d" opacity=".85" letter-spacing="2">BG-5501</text>
+    <text x="56" y="762" font-size="24" fill="#8a631d" opacity=".55">细节实拍参考图</text>
+  </g></svg>

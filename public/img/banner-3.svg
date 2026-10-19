@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-label="投资金条 现货供应">
+  <defs>
+    <linearGradient id="bb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fdf9ed"/><stop offset="1" stop-color="#e9d7ad"/>
+    </linearGradient>
+    <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9c461"/><stop offset=".5" stop-color="#c9a227"/><stop offset="1" stop-color="#8a631d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bb)"/>
+  <g opacity=".9" transform="translate(880 300) scale(1.5) translate(-400 -400)"><g transform="scale(.62) translate(240 240)">
+    <g transform="translate(400 400)">
+      <path d="M-230-120L-170-170H170L230-120Z" fill="url(#bm)" opacity=".82"/>
+      <rect x="-230" y="-120" width="460" height="246" rx="12" fill="url(#bm)"/>
+      <rect x="-230" y="-120" width="460" height="246" rx="12" fill="none" stroke="#fff" stroke-width="5" opacity=".35"/>
+      <text x="0" y="-26" text-anchor="middle" font-family="'PingFang SC',Arial" font-size="56" fill="#fdf9ed" letter-spacing="4">9999</text>
+      <text x="0" y="48" text-anchor="middle" font-family="'PingFang SC',Arial" font-size="38" fill="#fdf9ed" opacity=".85">FINE GOLD</text>
+      <path d="M-200-104L-120-150" stroke="#fff" stroke-width="14" opacity=".4" stroke-linecap="round"/>
+    </g></g></g>
+  <g font-family="'PingFang SC','Helvetica Neue',Arial,sans-serif">
+    <text x="80" y="268" font-size="76" font-weight="700" fill="#5b3f14" letter-spacing="4">投资金条 现货供应</text>
+    <text x="80" y="340" font-size="38" fill="#7a5a21" opacity=".9" letter-spacing="2">10g / 50g / 100g · 独立封装附证书</text>
+    <rect x="80" y="392" width="230" height="68" rx="34" fill="#c9a227"/>
+    <text x="195" y="436" font-size="30" fill="#fff" text-anchor="middle" letter-spacing="2">立即咨询</text>
+  </g>
+</svg>

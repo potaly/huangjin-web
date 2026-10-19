@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img" aria-label="足金999 四叶草耳钉">
+
+  <defs>
+    <linearGradient id="bga" x1="0.854" y1="0.146" x2="0.146" y2="0.854">
+      <stop offset="0" stop-color="#fdf9ed"/>
+      <stop offset="1" stop-color="#f4e6c3"/>
+    </linearGradient>
+    <linearGradient id="mta" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9c461"/>
+      <stop offset=".45" stop-color="#c9a227"/>
+      <stop offset="1" stop-color="#8a631d"/>
+    </linearGradient>
+    <linearGradient id="pta" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e3e9ef"/>
+      <stop offset=".5" stop-color="#9aa7b4"/>
+      <stop offset="1" stop-color="#6b7885"/>
+    </linearGradient>
+    <radialGradient id="vga" cx=".5" cy=".42" r=".72">
+      <stop offset=".55" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#8a631d" stop-opacity=".14"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bga)"/>
+  <rect width="800" height="800" fill="url(#vga)"/>
+      <g transform="translate(258 400)">
+        <ellipse cx="0" cy="-52" rx="40" ry="54" fill="url(#mta)" transform="rotate(0)"/><ellipse cx="0" cy="-52" rx="40" ry="54" fill="url(#mta)" transform="rotate(90)"/><ellipse cx="0" cy="-52" rx="40" ry="54" fill="url(#mta)" transform="rotate(180)"/><ellipse cx="0" cy="-52" rx="40" ry="54" fill="url(#mta)" transform="rotate(270)"/>
+        <circle cx="0" cy="0" r="22" fill="#fdf9ed"/>
+      </g>
+      <g transform="translate(542 400)">
+        <ellipse cx="0" cy="-52" rx="40" ry="54" fill="url(#mta)" transform="rotate(0)"/><ellipse cx="0" cy="-52" rx="40" ry="54" fill="url(#mta)" transform="rotate(90)"/><ellipse cx="0" cy="-52" rx="40" ry="54" fill="url(#mta)" transform="rotate(180)"/><ellipse cx="0" cy="-52" rx="40" ry="54" fill="url(#mta)" transform="rotate(270)"/>
+        <circle cx="0" cy="0" r="22" fill="#fdf9ed"/>
+      </g>
+  <g font-family="'PingFang SC','Helvetica Neue',Arial,sans-serif">
+    <text x="56" y="722" font-size="30" fill="#8a631d" opacity=".85" letter-spacing="2">ER-9901</text>
+    <text x="56" y="762" font-size="24" fill="#8a631d" opacity=".55">足金999 四叶草耳钉</text>
+  </g></svg>

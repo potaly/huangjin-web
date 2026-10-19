@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#f4f4f5"/>
+  <g stroke="#d7d8db" stroke-width="6" fill="none">
+    <rect x="120" y="140" width="160" height="120" rx="10"/>
+    <path d="M120 220l44-40 40 34 32-26 44 38"/>
+  </g>
+  <circle cx="166" cy="176" r="12" fill="#d7d8db"/>
+  <text x="200" y="300" text-anchor="middle" font-family="'PingFang SC',Arial" font-size="20" fill="#b3b5b9">暂无图片</text>
+</svg>

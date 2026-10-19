@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img" aria-label="18K金 群镶莫桑钻戒指">
+
+  <defs>
+    <linearGradient id="bga" x1="0.854" y1="0.146" x2="0.146" y2="0.854">
+      <stop offset="0" stop-color="#fdf9ed"/>
+      <stop offset="1" stop-color="#f4e6c3"/>
+    </linearGradient>
+    <linearGradient id="mta" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9c461"/>
+      <stop offset=".45" stop-color="#c9a227"/>
+      <stop offset="1" stop-color="#8a631d"/>
+    </linearGradient>
+    <linearGradient id="pta" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e3e9ef"/>
+      <stop offset=".5" stop-color="#9aa7b4"/>
+      <stop offset="1" stop-color="#6b7885"/>
+    </linearGradient>
+    <radialGradient id="vga" cx=".5" cy=".42" r=".72">
+      <stop offset=".55" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#8a631d" stop-opacity=".14"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bga)"/>
+  <rect width="800" height="800" fill="url(#vga)"/>
+    <ellipse cx="400" cy="470" rx="170" ry="170" fill="none" stroke="url(#mta)" stroke-width="34"/>
+    <path d="M400 170l78 74-78 104-78-104z" fill="#eef5fb" stroke="url(#mta)" stroke-width="8"/>
+    <path d="M322 244h156M400 170v178" stroke="#c9a227" stroke-width="5" opacity=".7"/>
+  <g font-family="'PingFang SC','Helvetica Neue',Arial,sans-serif">
+    <text x="56" y="722" font-size="30" fill="#8a631d" opacity=".85" letter-spacing="2">RG-1180</text>
+    <text x="56" y="762" font-size="24" fill="#8a631d" opacity=".55">18K金 群镶莫桑钻戒指</text>
+  </g></svg>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img" aria-label="Pt950 铂金素链 细节图">
+
+  <defs>
+    <linearGradient id="bgb" x1="0.146" y1="0.146" x2="0.854" y2="0.854">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#ede0c4"/>
+    </linearGradient>
+    <linearGradient id="mtb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9c461"/>
+      <stop offset=".45" stop-color="#c9a227"/>
+      <stop offset="1" stop-color="#8a631d"/>
+    </linearGradient>
+    <linearGradient id="ptb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e3e9ef"/>
+      <stop offset=".5" stop-color="#9aa7b4"/>
+      <stop offset="1" stop-color="#6b7885"/>
+    </linearGradient>
+    <radialGradient id="vgb" cx=".5" cy=".42" r=".72">
+      <stop offset=".55" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#8a631d" stop-opacity=".14"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bgb)"/>
+  <rect width="800" height="800" fill="url(#vgb)"/>
+<g transform="translate(400 400) scale(1.18) translate(-400 -400)"><path d="M170 240c0 186 78 292 230 292s230-106 230-292" fill="none" stroke="url(#ptb)" stroke-width="12"/><circle cx="170.0" cy="240.0" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="190.9" cy="282.7" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="211.8" cy="324.5" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="232.7" cy="364.6" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="253.6" cy="402.2" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="274.5" cy="436.5" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="295.5" cy="466.7" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="316.4" cy="492.4" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="337.3" cy="512.9" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="358.2" cy="527.8" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="379.1" cy="536.9" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="400.0" cy="540.0" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="420.9" cy="536.9" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="441.8" cy="527.8" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="462.7" cy="512.9" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="483.6" cy="492.4" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="504.5" cy="466.7" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="525.5" cy="436.5" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="546.4" cy="402.2" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="567.3" cy="364.6" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="588.2" cy="324.5" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="609.1" cy="282.7" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/><circle cx="630.0" cy="240.0" r="11" fill="none" stroke="url(#ptb)" stroke-width="7"/></g>
+
+  <g font-family="'PingFang SC','Helvetica Neue',Arial,sans-serif">
+    <text x="56" y="722" font-size="30" fill="#8a631d" opacity=".85" letter-spacing="2">NK-3390</text>
+    <text x="56" y="762" font-size="24" fill="#8a631d" opacity=".55">细节实拍参考图</text>
+  </g></svg>

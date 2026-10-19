@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: #f1f2f4;
+  color: #1f2328;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* PC 端也按小程序风格展示：主体固定最大宽度 480px 水平居中（§2.3） */
+.mall-shell {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #f7f7f8;
+  position: relative;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+@media (min-width: 520px) {
+  .mall-shell {
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* 底部 tabBar 与固定按钮栏同样限制在 480px 内 */
+.mall-fixed-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  z-index: 40;
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* 隐藏滚动条但保留滚动 */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 文字截断 */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 公告 / 商品详情富文本 */
+.rich-text {
+  font-size: 15px;
+  line-height: 1.85;
+  color: #33383f;
+  word-break: break-word;
+}
+.rich-text p { margin: 0 0 0.9em; }
+.rich-text h1, .rich-text h2, .rich-text h3, .rich-text h4 {
+  margin: 1.2em 0 0.6em;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.rich-text h1 { font-size: 20px; }
+.rich-text h2 { font-size: 18px; }
+.rich-text h3 { font-size: 16px; }
+.rich-text ul, .rich-text ol { margin: 0 0 0.9em; padding-left: 1.4em; }
+.rich-text ul { list-style: disc; }
+.rich-text ol { list-style: decimal; }
+.rich-text li { margin-bottom: 0.35em; }
+.rich-text img { max-width: 100%; height: auto; border-radius: 10px; margin: 0.5em 0; }
+.rich-text a { color: #ad8320; text-decoration: underline; }
+.rich-text strong { font-weight: 600; color: #1f2328; }
+.rich-text blockquote {
+  margin: 0 0 0.9em;
+  padding: 10px 14px;
+  background: #fdf9ed;
+  border-left: 3px solid #e0ab3b;
+  border-radius: 0 8px 8px 0;
+  color: #6b5620;
+}
+.rich-text table { width: 100%; border-collapse: collapse; margin-bottom: 0.9em; }
+.rich-text td, .rich-text th {
+  border: 1px solid #e8e8ea;
+  padding: 7px 10px;
+  font-size: 14px;
+}
+.rich-text hr { border: none; border-top: 1px solid #ececef; margin: 1.2em 0; }
+
+/* 公告滚动条 */
+@keyframes notice-scroll {
+  0%, 12% { transform: translateY(0); }
+  33%, 45% { transform: translateY(-100%); }
+  66%, 78% { transform: translateY(-200%); }
+  100% { transform: translateY(-300%); }
+}
+.notice-roll > div { animation: notice-scroll 12s linear infinite; }
+
+/* 骨架屏 */
+@keyframes skeleton {
+  0% { opacity: 0.55; }
+  50% { opacity: 1; }
+  100% { opacity: 0.55; }
+}
+.skeleton {
+  background: #e9eaec;
+  border-radius: 8px;
+  animation: skeleton 1.4s ease-in-out infinite;
+}
+
+/* 轮播 */
+.snap-x-mandatory {
+  scroll-snap-type: x mandatory;
+}
+.snap-center {
+  scroll-snap-align: center;
+}
+
+/* 可编辑富文本占位 */
+[contenteditable][data-placeholder]:empty::before {
+  content: attr(data-placeholder);
+  color: #9aa0a6;
+}

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-label="古法转运珠 新到货">
+  <defs>
+    <linearGradient id="bb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#ecdcb8"/>
+    </linearGradient>
+    <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9c461"/><stop offset=".5" stop-color="#c9a227"/><stop offset="1" stop-color="#8a631d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bb)"/>
+  <g opacity=".9" transform="translate(880 300) scale(1.5) translate(-400 -400)"><g transform="scale(.62) translate(240 240)"><circle cx="400" cy="380" r="190" fill="none" stroke="url(#bm)" stroke-width="5" opacity=".45"/><circle cx="400.0" cy="190.0" r="34" fill="url(#bm)"/>
+      <circle cx="390.0" cy="178.0" r="9" fill="#fff" opacity=".4"/><circle cx="482.4" cy="208.8" r="34" fill="url(#bm)"/>
+      <circle cx="472.4" cy="196.8" r="9" fill="#fff" opacity=".4"/><circle cx="548.5" cy="261.5" r="34" fill="url(#bm)"/>
+      <circle cx="538.5" cy="249.5" r="9" fill="#fff" opacity=".4"/><circle cx="585.2" cy="337.7" r="34" fill="url(#bm)"/>
+      <circle cx="575.2" cy="325.7" r="9" fill="#fff" opacity=".4"/><circle cx="585.2" cy="422.3" r="34" fill="url(#bm)"/>
+      <circle cx="575.2" cy="410.3" r="9" fill="#fff" opacity=".4"/><circle cx="548.5" cy="498.5" r="34" fill="url(#bm)"/>
+      <circle cx="538.5" cy="486.5" r="9" fill="#fff" opacity=".4"/><circle cx="482.4" cy="551.2" r="34" fill="url(#bm)"/>
+      <circle cx="472.4" cy="539.2" r="9" fill="#fff" opacity=".4"/><circle cx="400.0" cy="570.0" r="34" fill="url(#bm)"/>
+      <circle cx="390.0" cy="558.0" r="9" fill="#fff" opacity=".4"/><circle cx="317.6" cy="551.2" r="34" fill="url(#bm)"/>
+      <circle cx="307.6" cy="539.2" r="9" fill="#fff" opacity=".4"/><circle cx="251.5" cy="498.5" r="34" fill="url(#bm)"/>
+      <circle cx="241.5" cy="486.5" r="9" fill="#fff" opacity=".4"/><circle cx="214.8" cy="422.3" r="34" fill="url(#bm)"/>
+      <circle cx="204.8" cy="410.3" r="9" fill="#fff" opacity=".4"/><circle cx="214.8" cy="337.7" r="34" fill="url(#bm)"/>
+      <circle cx="204.8" cy="325.7" r="9" fill="#fff" opacity=".4"/><circle cx="251.5" cy="261.5" r="34" fill="url(#bm)"/>
+      <circle cx="241.5" cy="249.5" r="9" fill="#fff" opacity=".4"/><circle cx="317.6" cy="208.8" r="34" fill="url(#bm)"/>
+      <circle cx="307.6" cy="196.8" r="9" fill="#fff" opacity=".4"/></g></g>
+  <g font-family="'PingFang SC','Helvetica Neue',Arial,sans-serif">
+    <text x="80" y="268" font-size="76" font-weight="700" fill="#5b3f14" letter-spacing="4">古法转运珠 新到货</text>
+    <text x="80" y="340" font-size="38" fill="#7a5a21" opacity=".9" letter-spacing="2">6mm / 8mm 两种珠径 · 可按克拼配混批</text>
+    <rect x="80" y="392" width="230" height="68" rx="34" fill="#c9a227"/>
+    <text x="195" y="436" font-size="30" fill="#fff" text-anchor="middle" letter-spacing="2">立即咨询</text>
+  </g>
+</svg>

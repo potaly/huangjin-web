@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img" aria-label="18K金 几何耳线 细节图">
+
+  <defs>
+    <linearGradient id="bgb" x1="0.146" y1="0.146" x2="0.854" y2="0.854">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#ede0c4"/>
+    </linearGradient>
+    <linearGradient id="mtb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9c461"/>
+      <stop offset=".45" stop-color="#c9a227"/>
+      <stop offset="1" stop-color="#8a631d"/>
+    </linearGradient>
+    <linearGradient id="ptb" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e3e9ef"/>
+      <stop offset=".5" stop-color="#9aa7b4"/>
+      <stop offset="1" stop-color="#6b7885"/>
+    </linearGradient>
+    <radialGradient id="vgb" cx=".5" cy=".42" r=".72">
+      <stop offset=".55" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#8a631d" stop-opacity=".14"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bgb)"/>
+  <rect width="800" height="800" fill="url(#vgb)"/>
+<g transform="translate(400 400) scale(1.18) translate(-400 -400)">
+      <circle cx="272" cy="208" r="20" fill="url(#mtb)"/>
+      <path d="M272 228v300" stroke="url(#mtb)" stroke-width="9"/>
+      <rect x="226" y="528" width="92" height="92" rx="10" fill="none" stroke="url(#mtb)" stroke-width="18" transform="rotate(45 272 574)"/>
+      <circle cx="528" cy="208" r="20" fill="url(#mtb)"/>
+      <path d="M528 228v300" stroke="url(#mtb)" stroke-width="9"/>
+      <rect x="482" y="528" width="92" height="92" rx="10" fill="none" stroke="url(#mtb)" stroke-width="18" transform="rotate(45 528 574)"/></g>
+
+  <g font-family="'PingFang SC','Helvetica Neue',Arial,sans-serif">
+    <text x="56" y="722" font-size="30" fill="#8a631d" opacity=".85" letter-spacing="2">ER-9950</text>
+    <text x="56" y="762" font-size="24" fill="#8a631d" opacity=".55">细节实拍参考图</text>
+  </g></svg>
