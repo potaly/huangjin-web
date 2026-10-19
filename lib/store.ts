@@ -79,8 +79,19 @@ export async function loadDB(): Promise<DB> {
   if (existing) return migrate(existing)
 
   const seeded = await buildSeedDB()
-  await writeRaw(seeded)
-  return seeded
+
+  if (!hasRedis) {
+    memory.db = seeded
+    return seeded
+  }
+
+  // 多个冷启动实例可能同时发现空库：用 NX 写入，先到者胜，
+  // 失败方回读已有数据，避免把别人刚写入的内容覆盖掉。
+  const won = await redis().set(DB_KEY, JSON.stringify(seeded), { nx: true })
+  if (won) return seeded
+
+  const current = await readRaw()
+  return current ? migrate(current) : seeded
 }
 
 /** 覆盖写入整库（仅供初始化 / 重置使用） */

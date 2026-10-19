@@ -10,3 +10,10 @@ build/
 *.tsbuildinfo
 next-env.d.ts
 data/runtime-db.json
+.env*
+!.env.example
+
+# Vercel 集成安装的 agent skills（非项目产物）
+.agents/
+.claude/skills/
+skills-lock.json
