@@ -6,13 +6,13 @@
 
 ## 在线地址
 
-| 入口 | 地址 |
-| --- | --- |
-| 前台商城 | https://huangjin-web.vercel.app |
-| 管理后台 | https://huangjin-web.vercel.app/admin |
-| 健康检查 | https://huangjin-web.vercel.app/api/health |
+| 入口 | 自定义域名 | Vercel 默认域名 |
+| --- | --- | --- |
+| 前台商城 | https://xiaojing.keyseal.top | https://huangjin-web.vercel.app |
+| 管理后台 | https://xiaojing.keyseal.top/admin | https://huangjin-web.vercel.app/admin |
+| 健康检查 | https://xiaojing.keyseal.top/api/health | https://huangjin-web.vercel.app/api/health |
 
-仓库已与 Vercel 关联，推送到 `main` 会自动部署到生产环境。
+仓库已与 Vercel 关联，推送到 `main` 会自动构建并部署到生产环境。
 
 演示账号：
 
