@@ -8,9 +8,11 @@
 
 | 入口 | 地址 |
 | --- | --- |
-| 前台商城 | `/` |
-| 管理后台 | `/admin` |
-| 健康检查 | `/api/health` |
+| 前台商城 | https://huangjin-web.vercel.app |
+| 管理后台 | https://huangjin-web.vercel.app/admin |
+| 健康检查 | https://huangjin-web.vercel.app/api/health |
+
+仓库已与 Vercel 关联，推送到 `main` 会自动部署到生产环境。
 
 演示账号：
 
