@@ -52,17 +52,17 @@ export default function HomePage() {
   return (
     <div className="pb-4">
       {/* 顶部搜索 */}
-      <header className="sticky top-0 z-30 bg-gradient-to-b from-gold-500 to-gold-400 px-3 pb-3 pt-3">
+      <header className="sticky top-0 z-30 bg-champagne-bg px-3 pb-3 pt-3">
         <div className="mb-2.5 flex items-baseline justify-between">
-          <h1 className="flex items-center gap-1.5 text-[17px] font-semibold text-white">
+          <h1 className="flex items-center gap-1.5 text-[17px] font-semibold text-champagne-ink">
             {data?.siteName ?? settings.siteName}
             {(data?.demoLabel ?? settings.demoLabel) && (
-              <span className="rounded border border-white/75 px-1.5 text-[10px] font-normal leading-4">
+              <span className="rounded border border-gold-500 px-1.5 text-[10px] font-normal leading-4 text-gold-600">
                 {data?.demoLabel ?? settings.demoLabel}
               </span>
             )}
           </h1>
-          <span className="text-[11px] text-white/85">{data?.siteSlogan ?? settings.siteSlogan}</span>
+          <span className="text-[11px] text-champagne-sub">{data?.siteSlogan ?? settings.siteSlogan}</span>
         </div>
         <form onSubmit={search} className="flex items-center gap-2 rounded-full bg-white px-3.5 py-2">
           <svg width="16" height="16" viewBox="0 0 16 16" className="shrink-0 text-neutral-400" aria-hidden>

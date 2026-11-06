@@ -15,10 +15,10 @@ export default function ContactPage() {
 
   return (
     <div className="pb-6">
-      <header className="bg-gradient-to-b from-gold-500 to-gold-400 px-4 pb-6 pt-5">
-        <h1 className="text-[18px] font-semibold text-white">联系我们</h1>
-        <p className="mt-1 text-[12.5px] text-white/85">
-          {settings.siteSlogan || '源头工厂 · 按克批发 · 当日发货'}
+      <header className="bg-champagne-bg px-4 pb-6 pt-5">
+        <h1 className="text-[18px] font-semibold text-champagne-ink">联系我们</h1>
+        <p className="mt-1 text-[12.5px] text-champagne-sub">
+          {settings.siteSlogan || '5G黄金 · 时尚镶嵌 · 古法点钻'}
         </p>
       </header>
 
