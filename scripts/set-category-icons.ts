@@ -1,19 +1,29 @@
-// 把一级分类图标切换为 public/img/icon-cat-*.svg（古铜线条版）
+// 切换一级分类图标：默认商品实拍图，--line 切回古铜线条图标
 // 先部署包含新图标文件的版本，再执行本脚本，否则前台会短暂显示裂图。
 //
 // 用法（在 huangjin-web 目录下）：
-//   npx tsx --env-file=.env.local scripts/set-category-icons.ts
+//   npx tsx --env-file=.env.local scripts/set-category-icons.ts          # 实拍图
+//   npx tsx --env-file=.env.local scripts/set-category-icons.ts --line   # 线条图标
 
 import { mutate } from '../lib/store'
 import { addLog } from '../lib/api'
 
-const ICONS: Record<string, string> = {
-  项链吊坠: '/img/icon-cat-necklace.svg',
-  手镯手链: '/img/icon-cat-bracelet.svg',
-  戒指: '/img/icon-cat-ring.svg',
-  耳饰: '/img/icon-cat-earring.svg',
-  系列套装: '/img/icon-cat-set.svg',
+// 默认使用商品实拍分类图（public/img/cat-photo-*.png，由 scripts/category-photo/ 下的工具从微购相册商品图抠图生成）；
+// 加 --line 参数切回古铜线条图标（public/img/icon-cat-*.svg）
+const STYLE = process.argv.includes('--line') ? 'line' : 'photo'
+const KEYS: Record<string, string> = {
+  项链吊坠: 'necklace',
+  手镯手链: 'bracelet',
+  戒指: 'ring',
+  耳饰: 'earring',
+  系列套装: 'set',
 }
+const ICONS: Record<string, string> = Object.fromEntries(
+  Object.entries(KEYS).map(([name, key]) => [
+    name,
+    STYLE === 'line' ? `/img/icon-cat-${key}.svg` : `/img/cat-photo-${key}.png`,
+  ]),
+)
 
 async function main() {
   const changes = await mutate((db) => {
