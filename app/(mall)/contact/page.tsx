@@ -104,7 +104,7 @@ export default function ContactPage() {
             <div className="flex gap-3">
               <dt className="w-16 shrink-0 text-neutral-400">批发说明</dt>
               <dd className="flex-1 leading-relaxed text-neutral-800">
-                所有商品按克批发，库存以克计。前台不展示价格，当日报价请联系客服。
+                所有商品按克批发，库存以克计。前台展示参考工费，当日金价与总价请联系客服。
               </dd>
             </div>
             <div className="flex gap-3">

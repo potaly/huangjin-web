@@ -1,9 +1,10 @@
 // ────────────────────────────────────────────────────────────────
 // 前台视图模型
 //
-// 需求文档 §7.1 末尾明确：一期接口在后端就不得返回任何金价、工费、
-// 价格字段，不能只靠前端隐藏。因此这里显式构造返回对象，而不是把
-// 实体整个 spread 出去。
+// 需求文档 §7.1 末尾明确：一期接口在后端就不得返回金价、价格字段，
+// 不能只靠前端隐藏。因此这里显式构造返回对象，而不是把实体整个 spread 出去。
+// 例外（业务方要求）：前台展示「参考工费（元/克）」，由 laborFeePerG 提供；
+// 金价、附加费（extraFeePerG）、总价等仍然不返回。
 // ────────────────────────────────────────────────────────────────
 
 import type { DB, Notice, Product, Sku, StockDisplayMode } from './types'
@@ -108,6 +109,7 @@ export function productCard(db: DB, p: Product, mode: StockDisplayMode) {
     isRecommend: p.isRecommend,
     refWeightMin: refWeights.length ? Math.min(...refWeights) : null,
     refWeightMax: refWeights.length ? Math.max(...refWeights) : null,
+    laborFeePerG: p.laborFeePerG ?? null,
     skuCount: active.length,
     stockLevel: level,
     soldOut: level === 'SOLD_OUT',
@@ -139,6 +141,7 @@ export function productDetail(db: DB, p: Product, mode: StockDisplayMode) {
     materialName: material?.name ?? '',
     purity: p.purity ?? material?.purity ?? '',
     sizeDesc: p.sizeDesc ?? '',
+    laborFeePerG: p.laborFeePerG ?? null,
     attrs: p.attrs ?? [],
     detailHtml: sanitizeHtml(p.detailHtml),
     isRecommend: p.isRecommend,

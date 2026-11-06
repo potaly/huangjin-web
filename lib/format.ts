@@ -50,6 +50,20 @@ export function fmtAgo(value: string | null | undefined): string {
   return fmtDate(value)
 }
 
+/** 参考克重（卡片主信息）：9.7g / 5.5–7.5g，没有则返回空串 */
+export function fmtRefWeightShort(min: number | null, max: number | null): string {
+  if (min == null && max == null) return ''
+  const f = (n: number) => String(Number(n.toFixed(2)))
+  if (min != null && max != null && Math.abs(min - max) > 0.0005) return `${f(min)}–${f(max)}g`
+  return `${f((min ?? max) as number)}g`
+}
+
+/** 工费：¥35/克；小数最多保留 2 位；未设置返回「面议」 */
+export function fmtLaborFee(fee: number | null | undefined): string {
+  if (fee == null || !Number.isFinite(fee)) return '面议'
+  return `¥${Number(fee.toFixed(2))}/克`
+}
+
 /** 参考单件克重区间：3.2–5.8 g/件 */
 export function fmtRefWeightRange(min: number | null, max: number | null): string {
   if (min == null && max == null) return ''

@@ -7,7 +7,7 @@ import type { AdminSession, DB, Product, ProductAttr, Sku } from './types'
 import { bad, notFound, requireString, toInt, toStatus, toBool } from './api'
 import { nextId } from './store'
 import { applyStockChange } from './stock'
-import { compareWeight, parseWeight } from './num'
+import { compareWeight, parseWeight, roundAmount } from './num'
 import { sanitizeHtml } from './sanitize'
 
 export interface SkuInput {
@@ -33,12 +33,22 @@ export interface ProductInput {
   images?: unknown
   purity?: string
   sizeDesc?: string
+  /** 参考工费（元/克），空串 / null 表示未设置 */
+  laborFeePerG?: unknown
   attrs?: unknown
   detailHtml?: string
   isRecommend?: unknown
   status?: unknown
   sort?: unknown
   skus?: SkuInput[]
+}
+
+/** 工费（元/克）：空 → null；否则 0 ~ 100000，保留 2 位小数 */
+function parseFee(value: unknown): number | null {
+  if (value === '' || value == null) return null
+  const n = Number(value)
+  if (!Number.isFinite(n) || n < 0 || n > 100000) throw bad('工费（元/克）必须是 0 ~ 100000 之间的数字')
+  return roundAmount(n)
 }
 
 function normalizeAttrs(input: unknown): ProductAttr[] {
@@ -194,7 +204,7 @@ export function createProduct(db: DB, input: ProductInput, session: AdminSession
     isRecommend: toBool(input.isRecommend),
     status: toStatus(input.status, 0),
     sort: toInt(input.sort, 100),
-    laborFeePerG: null,
+    laborFeePerG: parseFee(input.laborFeePerG),
     extraFeePerG: null,
   }
   db.product.push(product)
@@ -240,6 +250,7 @@ export function updateProduct(
   if (input.isRecommend !== undefined) product.isRecommend = toBool(input.isRecommend)
   if (input.status !== undefined) product.status = toStatus(input.status, product.status)
   if (input.sort !== undefined) product.sort = toInt(input.sort, product.sort)
+  if (input.laborFeePerG !== undefined) product.laborFeePerG = parseFee(input.laborFeePerG)
 
   product.updatedAt = new Date().toISOString()
   product.updatedBy = session.username

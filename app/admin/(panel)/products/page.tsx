@@ -145,7 +145,7 @@ function ProductList() {
     <div>
       <PageTitle
         title="商品管理"
-        desc="一期不涉及价格；上架需至少一个启用 SKU 且已上传主图"
+        desc="前台展示克重与参考工费（元/克），不含金价；上架需至少一个启用 SKU 且已上传主图"
         actions={<Link href="/admin/products/new"><Button>新增商品</Button></Link>}
       />
 

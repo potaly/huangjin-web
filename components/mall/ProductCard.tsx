@@ -3,10 +3,10 @@
 import Link from 'next/link'
 import type { MallProductCard } from '@/lib/api-types'
 import type { StockDisplayMode } from '@/lib/types'
-import { fmtRefWeightRange, fmtWeight } from '@/lib/format'
+import { fmtLaborFee, fmtRefWeightShort, fmtWeight } from '@/lib/format'
 import { StockBadge, Tag } from '@/components/ui'
 
-/** 双列卡片：主图、名称、材质、库存克数（或等级）；一期不显示价格 */
+/** 双列卡片：主图、名称、克重 + 工费（最醒目）、材质、款号、库存；不显示金价 / 总价 */
 export function ProductCard({
   product,
   mode,
@@ -14,7 +14,7 @@ export function ProductCard({
   product: MallProductCard
   mode: StockDisplayMode
 }) {
-  const refRange = fmtRefWeightRange(product.refWeightMin, product.refWeightMax)
+  const weight = fmtRefWeightShort(product.refWeightMin, product.refWeightMax)
 
   return (
     <Link
@@ -46,15 +46,30 @@ export function ProductCard({
           {product.name}
         </h3>
 
+        {/* 最重要的两个信息：克重、工费 */}
+        <div className="grid grid-cols-2 rounded-lg bg-gold-50 py-1.5">
+          <div className="min-w-0 px-2">
+            <p className="text-[10px] leading-none text-neutral-400">克重</p>
+            <p className="mt-1 truncate text-[14px] font-semibold leading-none text-neutral-900">{weight || '—'}</p>
+          </div>
+          <div className="min-w-0 border-l border-gold-200/70 px-2">
+            <p className="text-[10px] leading-none text-neutral-400">工费</p>
+            <p
+              className={`mt-1 truncate text-[14px] font-semibold leading-none ${
+                product.laborFeePerG == null ? 'text-neutral-400' : 'text-gold-700'
+              }`}
+            >
+              {fmtLaborFee(product.laborFeePerG)}
+            </p>
+          </div>
+        </div>
+
         <div className="flex flex-wrap items-center gap-1">
           <Tag tone="gold">{product.materialName}</Tag>
           {product.skuCount > 1 && <Tag>{product.skuCount} 个规格</Tag>}
         </div>
 
-        <p className="truncate text-[11px] text-neutral-400">
-          款号 {product.styleNo}
-          {refRange ? ` · ${refRange}` : ''}
-        </p>
+        <p className="truncate text-[11px] text-neutral-400">款号 {product.styleNo}</p>
 
         <div className="flex items-center justify-between pt-0.5">
           {mode === 'EXACT' && product.availableWeight !== undefined ? (

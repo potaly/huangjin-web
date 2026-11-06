@@ -10,7 +10,7 @@ import { ProductCard } from '@/components/mall/ProductCard'
 import { useMall } from '@/components/mall/MallProvider'
 import { useToast } from '@/components/Toast'
 import { ErrorBox, Loading, StockBadge, Tag } from '@/components/ui'
-import { fmtWeight } from '@/lib/format'
+import { fmtLaborFee, fmtRefWeightShort, fmtWeight } from '@/lib/format'
 import { copyText } from '@/lib/clipboard'
 
 export default function GoodsDetailPage() {
@@ -117,6 +117,31 @@ export default function GoodsDetailPage() {
               {product.purity && <Tag>成色 {product.purity}</Tag>}
               <StockBadge level={product.stockLevel} />
             </div>
+
+            {/* 最重要的两个信息：克重、工费 */}
+            {(() => {
+              const ws = product.skus.map((s) => s.refWeight).filter((w): w is number => typeof w === 'number' && w > 0)
+              const weight = ws.length ? fmtRefWeightShort(Math.min(...ws), Math.max(...ws)) : ''
+              return (
+                <div className="mt-3 grid grid-cols-2 rounded-xl bg-gold-50 py-3">
+                  <div className="px-4">
+                    <p className="text-[12px] text-neutral-500">克重</p>
+                    <p className="mt-1 text-[22px] font-semibold leading-none text-neutral-900">{weight || '—'}</p>
+                  </div>
+                  <div className="border-l border-gold-200/70 px-4">
+                    <p className="text-[12px] text-neutral-500">工费</p>
+                    <p
+                      className={`mt-1 text-[22px] font-semibold leading-none ${
+                        product.laborFeePerG == null ? 'text-neutral-400' : 'text-gold-700'
+                      }`}
+                    >
+                      {fmtLaborFee(product.laborFeePerG)}
+                    </p>
+                  </div>
+                </div>
+              )
+            })()}
+
             <button
               type="button"
               onClick={copyStyleNo}
@@ -130,7 +155,7 @@ export default function GoodsDetailPage() {
               点击复制
             </button>
             <p className="mt-2.5 rounded-lg bg-gold-50 px-3 py-2 text-[12px] leading-relaxed text-gold-800">
-              本站按克批发，前台不展示价格。如需当日报价与起订量，请点击下方「咨询客服」。
+              本站按克批发，仅展示参考工费，不含当日金价。如需总价与起订量，请点击下方「咨询客服」。
             </p>
           </section>
 

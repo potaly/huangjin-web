@@ -51,6 +51,8 @@ export interface MallProductCard {
   isRecommend: boolean
   refWeightMin: number | null
   refWeightMax: number | null
+  /** 参考工费（元/克），未设置为 null */
+  laborFeePerG: number | null
   skuCount: number
   stockLevel: StockLevel
   soldOut: boolean
@@ -80,6 +82,8 @@ export interface MallProductDetail {
   materialName: string
   purity: string
   sizeDesc: string
+  /** 参考工费（元/克），未设置为 null */
+  laborFeePerG: number | null
   attrs: ProductAttr[]
   detailHtml: string
   isRecommend: boolean

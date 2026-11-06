@@ -190,7 +190,7 @@ export default function HomePage() {
           <p className="px-6 pt-6 text-center text-[11px] leading-relaxed text-neutral-400">
             本站所有商品按克批发，库存以克计（保留 3 位小数）。
             <br />
-            前台不展示价格，请联系客服获取当日报价。
+            前台展示参考工费，当日金价与总价请联系客服。
           </p>
         </>
       )}

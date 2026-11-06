@@ -44,6 +44,8 @@ interface FormState {
   images: string[]
   purity: string
   sizeDesc: string
+  /** 参考工费（元/克），空串表示未设置 */
+  laborFeePerG: string
   attrs: ProductAttr[]
   detailHtml: string
   isRecommend: boolean
@@ -71,6 +73,7 @@ const EMPTY: FormState = {
   images: [],
   purity: '',
   sizeDesc: '',
+  laborFeePerG: '',
   attrs: [],
   detailHtml: '',
   isRecommend: false,
@@ -113,6 +116,7 @@ export function ProductForm({ productId }: { productId?: number }) {
           images: p.images ?? [],
           purity: p.purity ?? '',
           sizeDesc: p.sizeDesc ?? '',
+          laborFeePerG: p.laborFeePerG == null ? '' : String(p.laborFeePerG),
           attrs: p.attrs ?? [],
           detailHtml: p.detailHtml ?? '',
           isRecommend: Boolean(p.isRecommend),
@@ -277,6 +281,17 @@ export function ProductForm({ productId }: { productId?: number }) {
               </Field>
               <Field label="尺寸说明">
                 <input value={form.sizeDesc} onChange={(e) => patch({ sizeDesc: e.target.value })} className={inputCls} placeholder="手围 15–17cm 可调" />
+              </Field>
+              <Field label="工费（元/克）" hint="前台列表与详情展示，不含金价；留空显示「面议」">
+                <input
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  value={form.laborFeePerG}
+                  onChange={(e) => patch({ laborFeePerG: e.target.value })}
+                  className={inputCls}
+                  placeholder="如 35"
+                />
               </Field>
             </div>
           </Card>

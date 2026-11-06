@@ -153,7 +153,7 @@ export function MallProvider({ children }: { children: ReactNode }) {
                 {settings.companyAddress}
               </p>
             )}
-            <p className="mt-1 text-neutral-400">本站商品按克批发，价格请联系客服获取</p>
+            <p className="mt-1 text-neutral-400">本站商品按克批发，当日金价与总价请联系客服获取</p>
           </div>
         </div>
       </Sheet>
