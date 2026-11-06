@@ -10,6 +10,16 @@ export class ApiError extends Error {
   }
 }
 
+export const MALL_TOKEN_KEY = 'fs_mall_token'
+
+function mallToken(): string {
+  try {
+    return typeof window === 'undefined' ? '' : localStorage.getItem(MALL_TOKEN_KEY) ?? ''
+  } catch {
+    return ''
+  }
+}
+
 interface Envelope<T> {
   code: number
   msg: string
@@ -25,6 +35,7 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
       ...(init?.body && !(init.body instanceof FormData)
         ? { 'Content-Type': 'application/json' }
         : {}),
+      ...(url.startsWith('/api/mall/') && mallToken() ? { Authorization: `Bearer ${mallToken()}` } : {}),
       ...init?.headers,
     },
   })
@@ -36,6 +47,12 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
     throw new ApiError(`服务异常（HTTP ${res.status}）`, res.status)
   }
 
+  if (body.code === 401 && url.startsWith('/api/mall/') && typeof window !== 'undefined') {
+    try { localStorage.removeItem(MALL_TOKEN_KEY) } catch {}
+    if (!window.location.pathname.startsWith('/login')) {
+      window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
+    }
+  }
   if (body.code !== 0) throw new ApiError(body.msg || '请求失败', body.code)
   return body.data as T
 }
