@@ -1,9 +1,10 @@
 import sys
 from PIL import Image, ImageDraw, ImageFilter
-# 用法：python3 tile.py <透明底主体png> <输出png>
-# 216x216（72 的 3 倍），香槟底圆角块，主体居中占约 80%，带很淡的投影
+# 用法：python3 tile.py <透明底主体png> <输出png> [主体占比，默认 0.88]
+# 216x216（72 的 3 倍），香槟底圆角块，主体居中，带很淡的投影
 src, out = sys.argv[1], sys.argv[2]
-W, R, FILL = 216, 60, 0.80
+W, R = 216, 60
+FILL = float(sys.argv[3]) if len(sys.argv) > 3 else 0.88
 SS = 3; N = W * SS
 obj = Image.open(src).convert('RGBA')
 box = int(N * FILL)

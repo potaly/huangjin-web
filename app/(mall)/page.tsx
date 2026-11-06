@@ -155,13 +155,13 @@ export default function HomePage() {
                   >
                     {c.icon ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={c.icon} alt="" className="h-11 w-11 rounded-xl" loading="lazy" />
+                      <img src={c.icon} alt="" className="h-14 w-14 rounded-2xl" loading="lazy" />
                     ) : (
-                      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gold-50 text-[15px] text-gold-600">
+                      <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gold-50 text-[17px] text-gold-600">
                         {c.name.slice(0, 1)}
                       </span>
                     )}
-                    <span className="max-w-full truncate text-[11px] text-neutral-700">{c.name}</span>
+                    <span className="max-w-full truncate text-[12px] text-neutral-700">{c.name}</span>
                   </Link>
                 ))}
               </div>
