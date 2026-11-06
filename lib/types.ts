@@ -137,6 +137,8 @@ export type StockLogType =
   | 'WEIGH_OUT'
   | 'UNLOCK'
   | 'REFUND_BACK'
+  | 'ORDER_OUT'
+  | 'ORDER_BACK'
 
 export const STOCK_LOG_TYPE_LABEL: Record<StockLogType, string> = {
   IN: '入库',
@@ -146,6 +148,8 @@ export const STOCK_LOG_TYPE_LABEL: Record<StockLogType, string> = {
   WEIGH_OUT: '称重出库',
   UNLOCK: '取消释放',
   REFUND_BACK: '退款回库',
+  ORDER_OUT: '下单扣减',
+  ORDER_BACK: '取消回库',
 }
 
 /** stock_log 库存流水 */
@@ -220,6 +224,62 @@ export interface MallSession {
   exp: number
 }
 
+/** 订单状态：待确认 / 已确认 / 已完成 / 已取消 */
+export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED'
+
+export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
+  PENDING: '待确认',
+  CONFIRMED: '已确认',
+  COMPLETED: '已完成',
+  CANCELLED: '已取消',
+}
+
+/** 订单明细：下单时的商品快照 */
+export interface OrderItem {
+  productId: number
+  skuId: number
+  name: string
+  styleNo: string
+  specName: string
+  cover: string
+  /** 单件参考克重（g） */
+  unitWeight: number
+  /** 每克工费（元），未设置为 null */
+  laborFeePerG: number | null
+  qty: number
+  /** qty × unitWeight，3 位小数 */
+  weight: number
+  /** weight × laborFeePerG，2 位小数；无工费为 null */
+  laborFee: number | null
+}
+
+/** order 订单（无在线支付，提交后由业务员跟进） */
+export interface Order extends BaseEntity {
+  /** 例：FS20261106-0001 */
+  orderNo: string
+  customerId: number
+  customerName: string
+  customerPhone: string
+  /** 下单时客户绑定的业务员 */
+  salesId: number | null
+  status: OrderStatus
+  items: OrderItem[]
+  totalQty: number
+  totalWeight: number
+  /** 所有明细都有工费时为合计，否则为 null */
+  totalLaborFee: number | null
+  remark?: string
+  /** 客户端生成的提交编号，用于防重复提交 */
+  clientToken: string
+  confirmedAt?: string
+  completedAt?: string
+  cancelledAt?: string
+  cancelledBy?: string
+  cancelReason?: string
+  /** 管理端是否已查看（用于新单红点） */
+  seenBySales: boolean
+}
+
 /** 整库文档 */
 export interface DB {
   schemaVersion: number
@@ -235,6 +295,7 @@ export interface DB {
   notice: Notice[]
   banner: Banner[]
   mallUser: MallUser[]
+  order: Order[]
 }
 
 export type TableName = Exclude<keyof DB, 'schemaVersion' | 'seq'>

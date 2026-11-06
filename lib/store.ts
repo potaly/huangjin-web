@@ -157,6 +157,7 @@ function migrate(db: DB): DB {
   db.notice ??= []
   db.banner ??= []
   db.mallUser ??= []
+  db.order ??= []
   db.schemaVersion ??= 1
   return db
 }

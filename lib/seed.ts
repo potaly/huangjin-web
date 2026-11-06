@@ -515,5 +515,6 @@ export async function buildSeedDB(): Promise<DB> {
     notice,
     banner,
     mallUser: [],
+    order: [],
   }
 }
