@@ -6,7 +6,7 @@ import type { StockDisplayMode } from '@/lib/types'
 import { fmtLaborFee, fmtRefWeightShort, fmtWeight } from '@/lib/format'
 import { StockBadge, Tag } from '@/components/ui'
 
-/** 双列卡片：主图、名称、克重 + 工费（最醒目）、材质、款号、库存；不显示金价 / 总价 */
+/** 双列卡片：主图、名称、克重 + 工费（最醒目）、库存；材质与款号只在详情页展示；不显示金价 / 总价 */
 export function ProductCard({
   product,
   mode,
@@ -64,12 +64,11 @@ export function ProductCard({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-1">
-          <Tag tone="gold">{product.materialName}</Tag>
-          {product.skuCount > 1 && <Tag>{product.skuCount} 个规格</Tag>}
-        </div>
-
-        <p className="truncate text-[11px] text-neutral-400">款号 {product.styleNo}</p>
+        {product.skuCount > 1 && (
+          <div className="flex flex-wrap items-center gap-1">
+            <Tag>{product.skuCount} 个规格</Tag>
+          </div>
+        )}
 
         <div className="flex items-center justify-between pt-0.5">
           {mode === 'EXACT' && product.availableWeight !== undefined ? (
