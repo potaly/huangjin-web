@@ -96,3 +96,48 @@ test('userView 带业务员姓名与角色名', () => {
   assert.equal(v.roleLabel, '客户')
   assert.equal(v.wxBound, true)
 })
+
+test('管理账号已绑定微信：手机号登录必须带本人 openid', () => {
+  const db = emptyDB()
+  const owner = addUser(db, { phone: '13800000000', role: 'OWNER', openid: 'wx1' })
+  assert.throws(() => loginByPhone(db, '13800000000'), /本人微信/)
+  assert.throws(() => loginByPhone(db, '13800000000', 'wx2'), /本人微信/)
+  assert.equal(owner.openid, 'wx1')
+  assert.equal(loginByPhone(db, '13800000000', 'wx1').id, owner.id)
+})
+
+test('管理账号未绑定微信：手机号登录可首次绑定', () => {
+  const db = emptyDB()
+  const owner = addUser(db, { phone: '13800000000', role: 'OWNER' })
+  loginByPhone(db, '13800000000', 'wx9')
+  assert.equal(owner.openid, 'wx9')
+})
+
+test('微信已绑定管理账号时，不能被其他账号抢绑', () => {
+  const db = emptyDB()
+  const sales = addUser(db, { phone: '13800000011', role: 'SALES', openid: 'wxs' })
+  const c = addUser(db, { phone: '13800000021', role: 'CUSTOMER' })
+  assert.throws(() => loginByPhone(db, '13800000021', 'wxs'), /已绑定管理账号/)
+  assert.equal(sales.openid, 'wxs')
+  assert.equal(c.openid, null)
+})
+
+test('修改手机号会解绑微信', () => {
+  const db = emptyDB()
+  const owner = addUser(db, { phone: '13800000000', role: 'OWNER' })
+  const c = addUser(db, { phone: '13800000021', role: 'CUSTOMER', openid: 'wxc' })
+  updateUser(db, owner, c.id, { phone: '13800000021' })
+  assert.equal(c.openid, 'wxc')
+  updateUser(db, owner, c.id, { phone: '13800000099' })
+  assert.equal(c.openid, null)
+})
+
+test('客户只能绑定已启用的业务员', () => {
+  const db = emptyDB()
+  const owner = addUser(db, { phone: '13800000000', role: 'OWNER' })
+  const off = addUser(db, { phone: '13800000011', role: 'SALES', status: 0 })
+  assert.throws(
+    () => createUser(db, owner, { phone: '13800000021', name: 'x', role: 'CUSTOMER', salesId: off.id }),
+    /业务员/,
+  )
+})

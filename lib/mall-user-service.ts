@@ -17,19 +17,25 @@ export function findUser(db: DB, id: number): MallUser | undefined {
   return alive(db).find((u) => u.id === id)
 }
 
-/** 白名单手机号登录；带 openid 时把微信绑到该用户（从其他用户上解绑） */
+/** 白名单手机号登录；带 openid 时把微信绑到该用户（从其他客户上解绑；管理账号的微信不可被抢绑） */
 export function loginByPhone(db: DB, rawPhone: string, openid?: string): MallUser {
   const phone = normalizePhone(rawPhone)
   const user = alive(db).find((u) => u.phone === phone)
   if (!user) throw bad('该手机号未开通，请联系店家')
   if (user.status !== 1) throw bad('账号已停用，请联系店家')
   const ts = new Date().toISOString()
+  const managed = user.role === 'OWNER' || user.role === 'SALES'
+  if (managed && user.openid && user.openid !== openid) {
+    throw bad('管理账号已绑定微信，请在小程序内用本人微信登录')
+  }
   if (openid) {
-    for (const other of db.mallUser) {
-      if (other.id !== user.id && other.openid === openid) {
-        other.openid = null
-        other.updatedAt = ts
-      }
+    const holders = db.mallUser.filter((o) => o.id !== user.id && o.openid === openid)
+    if (holders.some((o) => o.role === 'OWNER' || o.role === 'SALES')) {
+      throw bad('该微信已绑定管理账号，不能再绑定其他账号')
+    }
+    for (const other of holders) {
+      other.openid = null
+      other.updatedAt = ts
     }
     user.openid = openid
   }
@@ -62,7 +68,7 @@ function checkRole(role: unknown): MallRole {
 function checkSales(db: DB, salesId: unknown): number | null {
   if (salesId === null || salesId === undefined || salesId === '' || salesId === 0) return null
   const s = findUser(db, Number(salesId))
-  if (!s || s.role !== 'SALES') throw bad('绑定的必须是业务员')
+  if (!s || s.role !== 'SALES' || s.status !== 1) throw bad('绑定的业务员不存在或已停用')
   return s.id
 }
 
@@ -109,6 +115,7 @@ export function updateUser(db: DB, actor: MallUser, id: number, input: UserInput
   if (input.phone !== undefined) {
     const phone = normalizePhone(input.phone)
     if (alive(db).some((u) => u.phone === phone && u.id !== id)) throw bad('该手机号已存在')
+    if (phone !== user.phone) user.openid = null
     user.phone = phone
   }
   if (input.name !== undefined) user.name = checkName(input.name)
