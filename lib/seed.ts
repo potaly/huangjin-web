@@ -76,6 +76,7 @@ export async function buildSeedDB(): Promise<DB> {
     ['company.address', '深圳市罗湖区水贝珠宝大厦 18 楼 1801', '公司地址'],
     ['site.name', '凡晟珠宝', '站点名称'],
     ['site.demo.label', '', '演示版标识文字（如「演示版」），留空不显示'],
+    ['mall.login.required', 'false', '前台是否必须登录后才能浏览（true / false）'],
     ['site.slogan', '5G黄金 · 时尚镶嵌 · 古法点钻', '站点标语'],
     ['order.pay.timeout.minutes', '30', '【二期】待支付超时自动取消（分钟）'],
     ['order.auto.confirm.days', '7', '【二期】发货后自动确认收货（天）'],
@@ -513,5 +514,6 @@ export async function buildSeedDB(): Promise<DB> {
     stockLog,
     notice,
     banner,
+    mallUser: [],
   }
 }

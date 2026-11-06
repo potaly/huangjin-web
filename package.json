@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "test": "tsx --test \"tests/**/*.test.ts\"",
     "seed:redis": "tsx scripts/seed-redis.ts"
   },
   "dependencies": {

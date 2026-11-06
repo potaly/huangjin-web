@@ -189,6 +189,37 @@ export interface Banner extends BaseEntity {
   status: 0 | 1
 }
 
+/** 前台用户角色：老板 / 业务员 / 客户 */
+export type MallRole = 'OWNER' | 'SALES' | 'CUSTOMER'
+
+export const MALL_ROLE_LABEL: Record<MallRole, string> = {
+  OWNER: '老板',
+  SALES: '业务员',
+  CUSTOMER: '客户',
+}
+
+/** mall_user 前台用户（白名单手机号） */
+export interface MallUser extends BaseEntity {
+  /** 11 位手机号，未删除范围内唯一 */
+  phone: string
+  name: string
+  role: MallRole
+  /** 仅客户：绑定的业务员 MallUser.id */
+  salesId?: number | null
+  /** 绑定的微信 openid，唯一 */
+  openid?: string | null
+  /** 0 停用 / 1 启用 */
+  status: 0 | 1
+  lastLoginAt?: string
+}
+
+/** 前台会话载荷 */
+export interface MallSession {
+  uid: number
+  role: MallRole
+  exp: number
+}
+
 /** 整库文档 */
 export interface DB {
   schemaVersion: number
@@ -203,6 +234,7 @@ export interface DB {
   stockLog: StockLog[]
   notice: Notice[]
   banner: Banner[]
+  mallUser: MallUser[]
 }
 
 export type TableName = Exclude<keyof DB, 'schemaVersion' | 'seq'>
