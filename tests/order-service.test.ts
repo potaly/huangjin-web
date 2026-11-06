@@ -1,8 +1,9 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { assertNoOpenOrders } from '../lib/product-service'
 import { addProduct, addUser, emptyDB } from './helpers'
 import {
-  changeOrderStatus, managerBadge, placeOrder, sellableQty, visibleOrders,
+  changeOrderStatus, managerBadge, markSeen, placeOrder, sellableQty, visibleOrders,
 } from '../lib/order-service'
 
 function setup() {
@@ -138,4 +139,84 @@ test('红点：可见范围内待确认且未查看的单数', () => {
   assert.equal(managerBadge(db, owner), 1)
   o.seenBySales = true
   assert.equal(managerBadge(db, s1), 0)
+})
+
+test('取消订单：规格已删除时不卡死，仅回库仍存在的规格', () => {
+  const { db, c1, a, b } = setup()
+  const o = placeOrder(db, c1, { items: [{ skuId: a.sku.id, qty: 2 }, { skuId: b.sku.id, qty: 1 }], clientToken: 't' })
+  b.sku.deleted = true
+  assert.doesNotThrow(() => changeOrderStatus(db, c1, o.id, 'cancel'))
+  assert.equal(o.status, 'CANCELLED')
+  assert.equal(sellableQty(a.sku), 10)
+  assert.match(o.cancelReason ?? '', /部分规格已删除，未回库/)
+  assert.equal(db.stockLog.filter((l) => l.type === 'ORDER_BACK').length, 1)
+})
+
+test('clientToken 复用：内容相同返回原单，内容不同 409', () => {
+  const { db, c1, a, b } = setup()
+  const o1 = placeOrder(db, c1, { items: [{ skuId: a.sku.id, qty: 1 }, { skuId: b.sku.id, qty: 1 }], clientToken: 'k', remark: 'x' })
+  const o2 = placeOrder(db, c1, { items: [{ skuId: b.sku.id, qty: 1 }, { skuId: a.sku.id, qty: 1 }], clientToken: 'k', remark: 'x' })
+  assert.equal(o1.id, o2.id)
+  assert.throws(
+    () => placeOrder(db, c1, { items: [{ skuId: a.sku.id, qty: 2 }], clientToken: 'k', remark: 'x' }),
+    (e: any) => e.code === 409 && /其他内容/.test(e.message),
+  )
+  assert.throws(
+    () => placeOrder(db, c1, { items: [{ skuId: a.sku.id, qty: 1 }, { skuId: b.sku.id, qty: 1 }], clientToken: 'k', remark: 'y' }),
+    /其他内容/,
+  )
+  assert.equal(db.order.length, 1)
+})
+
+test('入参畸形：null、items 非数组、明细非对象', () => {
+  const { db, c1, a } = setup()
+  assert.throws(() => placeOrder(db, c1, null as any), /选购清单为空/)
+  assert.throws(() => placeOrder(db, c1, { items: {} as any, clientToken: 't' }), /选购清单为空/)
+  assert.throws(() => placeOrder(db, c1, { items: [null as any], clientToken: 't' }), /规格不合法/)
+  assert.throws(() => placeOrder(db, c1, { items: [1 as any], clientToken: 't' }), /规格不合法/)
+  assert.equal(sellableQty(a.sku), 10)
+})
+
+test('clientToken 超过 64 位被拒绝', () => {
+  const { db, c1, a } = setup()
+  assert.throws(() => placeOrder(db, c1, { items: [{ skuId: a.sku.id, qty: 1 }], clientToken: 'x'.repeat(65) }), /提交编号不合法/)
+  placeOrder(db, c1, { items: [{ skuId: a.sku.id, qty: 1 }], clientToken: 'x'.repeat(64) })
+})
+
+test('订单号取当天最大序号加一', () => {
+  const { db, c1, a } = setup()
+  const o1 = placeOrder(db, c1, { items: [{ skuId: a.sku.id, qty: 1 }], clientToken: 'n1' })
+  placeOrder(db, c1, { items: [{ skuId: a.sku.id, qty: 1 }], clientToken: 'n2' })
+  o1.orderNo = o1.orderNo.replace(/-\d+$/, '-0005')
+  const o3 = placeOrder(db, c1, { items: [{ skuId: a.sku.id, qty: 1 }], clientToken: 'n3' })
+  assert.match(o3.orderNo, /-0006$/)
+})
+
+test('可售件数按毫克整数计算，不受浮点影响', () => {
+  const { a } = setup()
+  const sku = { ...a.sku, refWeight: 0.1, stockWeight: 0.3, lockedWeight: 0 }
+  assert.equal(sellableQty(sku), 3)
+})
+
+test('已读：只有本单业务员（或无业务员单的老板）查看才消除红点', () => {
+  const { db, owner, s1, s2, c1, a } = setup()
+  const o = placeOrder(db, c1, { items: [{ skuId: a.sku.id, qty: 1 }], clientToken: 'a' })
+  assert.equal(markSeen(o, owner), false)
+  assert.equal(markSeen(o, s2), false)
+  assert.equal(o.seenBySales, false)
+  assert.equal(markSeen(o, s1), true)
+  assert.equal(o.seenBySales, true)
+  assert.equal(markSeen(o, s1), false)
+  const orphan = placeOrder(db, addUser(db, { phone: '13800000099', role: 'CUSTOMER', name: '散客' }), { items: [{ skuId: a.sku.id, qty: 1 }], clientToken: 'b' })
+  assert.equal(orphan.salesId, null)
+  assert.equal(markSeen(orphan, owner), true)
+})
+
+test('有未完成订单的规格/商品不能删除，订单取消后可以', () => {
+  const { db, c1, a } = setup()
+  const o = placeOrder(db, c1, { items: [{ skuId: a.sku.id, qty: 1 }], clientToken: 'g' })
+  assert.throws(() => assertNoOpenOrders(db, { skuId: a.sku.id }), /未完成订单/)
+  assert.throws(() => assertNoOpenOrders(db, { productId: a.product.id }), /未完成订单/)
+  changeOrderStatus(db, c1, o.id, 'cancel')
+  assert.doesNotThrow(() => assertNoOpenOrders(db, { productId: a.product.id }))
 })

@@ -1,9 +1,9 @@
 // 订单业务规则：纯函数，调用方负责放进 mutate() 事务
 // 库存以克存储；可售件数 = floor((stockWeight − lockedWeight) / refWeight)
-import { bad, forbidden, notFound } from './api'
+import { BizError, bad, forbidden, notFound } from './api'
 import { nextId } from './store'
 import { applyStockChange } from './stock'
-import { addWeight, roundAmount, roundWeight } from './num'
+import { roundAmount, roundWeight, toMg } from './num'
 import {
   ORDER_STATUS_LABEL, type DB, type MallUser, type Order, type OrderItem, type OrderStatus, type Sku,
 } from './types'
@@ -14,8 +14,9 @@ export const MAX_QTY_PER_ITEM = 999
 export function sellableQty(sku: Sku): number {
   const w = sku.refWeight
   if (typeof w !== 'number' || !(w > 0)) return 0
-  const available = addWeight(sku.stockWeight, -sku.lockedWeight)
-  return Math.max(0, Math.floor(available / w + 1e-6))
+  const unitMg = toMg(w)
+  if (unitMg <= 0) return 0
+  return Math.max(0, Math.floor((toMg(sku.stockWeight) - toMg(sku.lockedWeight)) / unitMg))
 }
 
 export interface PlaceOrderInput {
@@ -32,21 +33,27 @@ function todayKey(d = new Date()): string {
 
 function nextOrderNo(db: DB): string {
   const prefix = `FS${todayKey()}-`
-  const n = db.order.filter((o) => o.orderNo.startsWith(prefix)).length + 1
+  let max = 0
+  for (const o of db.order) {
+    if (!o.orderNo.startsWith(prefix)) continue
+    const n = Number(o.orderNo.slice(prefix.length))
+    if (Number.isInteger(n) && n > max) max = n
+  }
+  const n = max + 1
   return `${prefix}${String(n).padStart(4, '0')}`
 }
 
 export function placeOrder(db: DB, customer: MallUser, input: PlaceOrderInput): Order {
   if (customer.role !== 'CUSTOMER') throw forbidden('只有客户账号可以下单')
+  if (!input || typeof input !== 'object' || !Array.isArray(input.items)) throw bad('选购清单为空')
   const clientToken = String(input.clientToken ?? '').trim()
   if (!clientToken) throw bad('缺少提交编号，请刷新后重试')
-
-  const existed = db.order.find((o) => o.customerId === customer.id && o.clientToken === clientToken)
-  if (existed) return existed
+  if (clientToken.length > 64) throw bad('提交编号不合法')
 
   // 合并同一规格
   const merged = new Map<number, number>()
-  for (const raw of input.items ?? []) {
+  for (const raw of input.items) {
+    if (!raw || typeof raw !== 'object') throw bad('规格不合法')
     const skuId = Number(raw.skuId)
     const qty = Number(raw.qty)
     if (!Number.isInteger(skuId) || skuId <= 0) throw bad('规格不合法')
@@ -54,6 +61,15 @@ export function placeOrder(db: DB, customer: MallUser, input: PlaceOrderInput): 
     merged.set(skuId, (merged.get(skuId) ?? 0) + qty)
   }
   if (merged.size === 0) throw bad('选购清单为空')
+
+  const remark = String(input.remark ?? '').trim().slice(0, 200)
+  const fingerprint = [...merged.entries()].sort((a, b) => a[0] - b[0]).map(([id, q]) => `${id}:${q}`).join(',') + '|' + remark
+
+  const existed = db.order.find((o) => o.customerId === customer.id && o.clientToken === clientToken)
+  if (existed) {
+    if (existed.fingerprint === undefined || existed.fingerprint === fingerprint) return existed
+    throw new BizError('该提交编号已用于其他内容，请刷新后重试', 409)
+  }
 
   // 先全部校验，任何一项不通过都不改库
   const lines: Array<{ sku: Sku; item: OrderItem }> = []
@@ -101,7 +117,6 @@ export function placeOrder(db: DB, customer: MallUser, input: PlaceOrderInput): 
 
   const items = lines.map((l) => l.item)
   const ts = new Date().toISOString()
-  const remark = String(input.remark ?? '').trim().slice(0, 200)
   const order: Order = {
     id: nextId(db, 'order'),
     createdAt: ts,
@@ -121,6 +136,7 @@ export function placeOrder(db: DB, customer: MallUser, input: PlaceOrderInput): 
       : null,
     ...(remark ? { remark } : {}),
     clientToken,
+    fingerprint,
     seenBySales: false,
   }
   db.order.unshift(order)
@@ -161,7 +177,10 @@ export function changeOrderStatus(db: DB, actor: MallUser, id: number, action: O
     if (!allowed.includes(o.status)) throw bad(`「${ORDER_STATUS_LABEL[o.status]}」的订单不能取消`)
     const why = String(reason ?? '').trim().slice(0, 200)
     if (isManager && !why) throw bad('请填写取消原因')
-    for (const item of o.items) {
+    // 规格可能在下单后被删除：只回库仍存在的规格，已删除的跳过，保证取消不会卡死
+    const restorable = o.items.filter((item) => db.productSku.some((s) => s.id === item.skuId && !s.deleted))
+    const skipped = o.items.length - restorable.length
+    for (const item of restorable) {
       applyStockChange(db, {
         skuId: item.skuId,
         type: 'ORDER_BACK',
@@ -174,7 +193,7 @@ export function changeOrderStatus(db: DB, actor: MallUser, id: number, action: O
     o.status = 'CANCELLED'
     o.cancelledAt = ts
     o.cancelledBy = actor.name
-    o.cancelReason = why || '客户取消'
+    o.cancelReason = (why || '客户取消') + (skipped > 0 ? '（部分规格已删除，未回库）' : '')
   } else {
     throw bad('不支持的操作')
   }
@@ -188,6 +207,20 @@ export function changeOrderStatus(db: DB, actor: MallUser, id: number, action: O
 export function managerBadge(db: DB, actor: MallUser): number {
   if (actor.role !== 'OWNER' && actor.role !== 'SALES') return 0
   return visibleOrders(db, actor, 'PENDING').filter((o) => !o.seenBySales).length
+}
+
+/** 该查看者打开订单详情时是否应标记已读：本单业务员；无业务员的单由老板 */
+export function shouldMarkSeen(o: Order, actor: MallUser): boolean {
+  if (o.seenBySales) return false
+  if (o.salesId !== null && o.salesId !== undefined) return actor.id === o.salesId
+  return actor.role === 'OWNER'
+}
+
+/** 标记已读，返回是否发生了变更 */
+export function markSeen(o: Order, actor: MallUser): boolean {
+  if (!shouldMarkSeen(o, actor)) return false
+  o.seenBySales = true
+  return true
 }
 
 export function orderView(o: Order) {

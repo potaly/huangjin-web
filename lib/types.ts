@@ -271,6 +271,8 @@ export interface Order extends BaseEntity {
   remark?: string
   /** 客户端生成的提交编号，用于防重复提交 */
   clientToken: string
+  /** 下单内容指纹（合并后的 skuId:qty + 备注），用于识别提交编号被复用 */
+  fingerprint?: string
   confirmedAt?: string
   completedAt?: string
   cancelledAt?: string
