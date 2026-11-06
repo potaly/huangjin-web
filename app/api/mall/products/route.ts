@@ -1,6 +1,7 @@
 // GET /api/mall/products — 商品分页：keyword、categoryId、materialId、sort
 import { handle, ok, pageParams, paginate } from '@/lib/api'
 import { loadDB } from '@/lib/store'
+import { requireMallAccess } from '@/lib/mall-auth'
 import { categoryScope, onSaleProducts, productCard, skusOf, stockDisplayMode } from '@/lib/mall'
 import { availableWeight } from '@/lib/stock'
 
@@ -9,6 +10,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(req: Request) {
   return handle(async () => {
     const db = await loadDB()
+    requireMallAccess(db)
     const url = new URL(req.url)
     const { pageNum, pageSize } = pageParams(url)
     const mode = stockDisplayMode(db)

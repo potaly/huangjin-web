@@ -21,6 +21,11 @@ const GROUPS: Array<{
     keys: ['site.name', 'site.slogan', 'site.demo.label'],
   },
   {
+    title: '登录与下单',
+    desc: '开启后，小程序与 H5 必须用白名单手机号登录才能浏览商品',
+    keys: ['mall.login.required'],
+  },
+  {
     title: '客服与公司信息',
     desc: '前台「联系我们」与悬浮客服弹窗使用',
     keys: ['contact.phone', 'contact.wechat', 'contact.wechat.qrcode', 'contact.work.time', 'company.address'],
@@ -47,6 +52,7 @@ const LABELS: Record<string, string> = {
   'site.name': '站点名称',
   'site.slogan': '站点标语',
   'site.demo.label': '演示版标识（留空不显示）',
+  'mall.login.required': '必须登录才能浏览（true / false）',
   'contact.phone': '客服电话',
   'contact.wechat': '客服微信号',
   'contact.wechat.qrcode': '客服微信二维码',

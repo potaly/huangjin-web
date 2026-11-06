@@ -1,12 +1,14 @@
 // GET /api/mall/materials — 启用材质，供商品列表筛选
 import { handle, ok } from '@/lib/api'
 import { loadDB } from '@/lib/store'
+import { requireMallAccess } from '@/lib/mall-auth'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
   return handle(async () => {
     const db = await loadDB()
+    requireMallAccess(db)
     const records = db.goldMaterial
       .filter((m) => !m.deleted && m.status === 1)
       .sort((a, b) => a.sort - b.sort || a.id - b.id)

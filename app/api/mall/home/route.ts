@@ -1,6 +1,7 @@
 // GET /api/mall/home — 轮播、有效公告前 3 条、弹窗公告、推荐商品
 import { handle, ok } from '@/lib/api'
 import { loadDB } from '@/lib/store'
+import { requireMallAccess } from '@/lib/mall-auth'
 import {
   noticeCard, onSaleProducts, productCard, stockDisplayMode, visibleNotices, categoryTree, configMap,
 } from '@/lib/mall'
@@ -10,6 +11,7 @@ export const dynamic = 'force-dynamic'
 export async function GET() {
   return handle(async () => {
     const db = await loadDB()
+    requireMallAccess(db)
     const mode = stockDisplayMode(db)
     const notices = visibleNotices(db)
     const cfg = configMap(db)
