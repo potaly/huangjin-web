@@ -164,6 +164,17 @@ export function categoryTree(db: DB, opts: { onlyWithProducts?: boolean } = {}) 
   const countOf = (categoryId: number) =>
     products.filter((p) => p.categoryId === categoryId).length
 
+  /**
+   * 二级分类的展示图：取该分类下排在最前的在架商品（推荐优先，再按排序值）。
+   * 优先用第 2 张图——第 1 张常是带文字标注的拼图，不适合当缩略图。
+   */
+  const coverOf = (categoryId: number): string | undefined => {
+    const first = products
+      .filter((p) => p.categoryId === categoryId)
+      .sort((a, b) => (a.isRecommend === b.isRecommend ? 0 : a.isRecommend ? -1 : 1) || a.sort - b.sort || b.id - a.id)[0]
+    return first ? first.images?.[1] ?? first.cover : undefined
+  }
+
   return db.category
     .filter((c) => !c.deleted && c.status === 1 && c.parentId === 0)
     .sort((a, b) => a.sort - b.sort || a.id - b.id)
@@ -171,7 +182,7 @@ export function categoryTree(db: DB, opts: { onlyWithProducts?: boolean } = {}) 
       const children = db.category
         .filter((c) => !c.deleted && c.status === 1 && c.parentId === parent.id)
         .sort((a, b) => a.sort - b.sort || a.id - b.id)
-        .map((c) => ({ id: c.id, name: c.name, icon: c.icon, productCount: countOf(c.id) }))
+        .map((c) => ({ id: c.id, name: c.name, icon: c.icon, cover: coverOf(c.id), productCount: countOf(c.id) }))
         .filter((c) => (opts.onlyWithProducts ? c.productCount > 0 : true))
 
       return {

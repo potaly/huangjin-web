@@ -36,7 +36,8 @@ export interface MallCategoryNode {
   name: string
   icon?: string
   productCount: number
-  children: Array<{ id: number; name: string; icon?: string; productCount: number }>
+  /** cover：该分类下一款在架商品的实拍图，用作二级分类缩略图 */
+  children: Array<{ id: number; name: string; icon?: string; cover?: string; productCount: number }>
 }
 
 export interface MallProductCard {
