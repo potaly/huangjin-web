@@ -76,7 +76,7 @@ export async function buildSeedDB(): Promise<DB> {
     ['company.address', '深圳市罗湖区水贝珠宝大厦 18 楼 1801', '公司地址'],
     ['site.name', '凡晟珠宝', '站点名称'],
     ['site.demo.label', '', '演示版标识文字（如「演示版」），留空不显示'],
-    ['site.slogan', '源头工厂 · 按克批发 · 当日发货', '站点标语'],
+    ['site.slogan', '5G黄金 · 时尚镶嵌 · 古法点钻', '站点标语'],
     ['order.pay.timeout.minutes', '30', '【二期】待支付超时自动取消（分钟）'],
     ['order.auto.confirm.days', '7', '【二期】发货后自动确认收货（天）'],
     ['order.weigh.tolerance.percent', '0', '【二期】实际克数超出预估的容差比例'],
@@ -121,7 +121,7 @@ export async function buildSeedDB(): Promise<DB> {
   const catIdByName: Record<string, number> = {}
   catTree.forEach(([name, icon, children], i) => {
     const parentId = ++catId
-    category.push({ ...base(parentId), parentId: 0, name, icon: img(`cat-${icon}`), sort: (i + 1) * 10, status: 1 })
+    category.push({ ...base(parentId), parentId: 0, name, icon: img(icon === 'bar' ? `cat-${icon}` : `icon-cat-${icon}`), sort: (i + 1) * 10, status: 1 })
     catIdByName[name] = parentId
     children.forEach((child, j) => {
       const cid = ++catId

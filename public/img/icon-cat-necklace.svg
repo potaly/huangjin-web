@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72" role="img" aria-label="项链吊坠">
+  <rect width="72" height="72" rx="20" fill="#f3ece2"/>
+  <g fill="none" stroke="#8c6b3b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 18c0 16 7 24 16 24s16-8 16-24"/>
+    <path d="M36 42v4"/>
+    <path d="M36 47l6 7-6 8-6-8z"/>
+  </g>
+</svg>

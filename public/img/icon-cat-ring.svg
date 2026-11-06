@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72" role="img" aria-label="戒指">
+  <rect width="72" height="72" rx="20" fill="#f3ece2"/>
+  <g fill="none" stroke="#8c6b3b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="36" cy="44" rx="15" ry="13"/>
+    <path d="M29 24h14l4 5-11 9-11-9z"/>
+    <path d="M25 29h22" stroke-width="1.5"/>
+  </g>
+</svg>
