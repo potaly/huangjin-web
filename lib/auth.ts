@@ -8,6 +8,7 @@
 import crypto from 'crypto'
 import { cookies } from 'next/headers'
 import type { AdminSession, RoleCode } from './types'
+import { signToken, verifyToken } from './sign'
 
 export const ADMIN_COOKIE = 'hj_admin_token'
 /** 会话有效期：2 小时 */
@@ -19,14 +20,6 @@ export const MAX_FAIL_COUNT = 5
 const PBKDF2_ITERATIONS = 120_000
 const PBKDF2_KEYLEN = 32
 const PBKDF2_DIGEST = 'sha256'
-
-function secret(): string {
-  return (
-    process.env.ADMIN_SESSION_SECRET ||
-    // 仅用于未配置密钥的本地 / 预览环境，生产必须设置 ADMIN_SESSION_SECRET
-    'huangjin-dev-insecure-secret'
-  )
-}
 
 // ── 口令 ────────────────────────────────────────────────────────
 
@@ -62,42 +55,12 @@ export function verifyPassword(plain: string, stored: string): boolean {
 
 // ── 会话令牌 ────────────────────────────────────────────────────
 
-function b64url(buf: Buffer): string {
-  return buf.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-}
-
-function fromB64url(s: string): Buffer {
-  const pad = s.length % 4 === 0 ? '' : '='.repeat(4 - (s.length % 4))
-  return Buffer.from(s.replace(/-/g, '+').replace(/_/g, '/') + pad, 'base64')
-}
-
-function sign(payload: string): string {
-  return b64url(crypto.createHmac('sha256', secret()).update(payload).digest())
-}
-
 export function createToken(session: Omit<AdminSession, 'exp'>): string {
-  const payload: AdminSession = { ...session, exp: Date.now() + SESSION_TTL_MS }
-  const body = b64url(Buffer.from(JSON.stringify(payload), 'utf8'))
-  return `${body}.${sign(body)}`
+  return signToken<AdminSession>({ ...session, exp: Date.now() + SESSION_TTL_MS })
 }
 
 export function parseToken(token: string | undefined | null): AdminSession | null {
-  if (!token) return null
-  const [body, mac] = token.split('.')
-  if (!body || !mac) return null
-
-  const expectedMac = sign(body)
-  const a = Buffer.from(mac)
-  const b = Buffer.from(expectedMac)
-  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return null
-
-  try {
-    const session = JSON.parse(fromB64url(body).toString('utf8')) as AdminSession
-    if (!session?.exp || session.exp < Date.now()) return null
-    return session
-  } catch {
-    return null
-  }
+  return verifyToken<AdminSession>(token)
 }
 
 /** 从请求 Cookie 中解析当前登录管理员 */
