@@ -74,7 +74,7 @@ export async function buildSeedDB(): Promise<DB> {
     ['contact.wechat.qrcode', img('qrcode'), '客服微信二维码图片'],
     ['contact.work.time', '周一至周六 9:00–18:00', '工作时间'],
     ['company.address', '深圳市罗湖区水贝珠宝大厦 18 楼 1801', '公司地址'],
-    ['site.name', '金源首饰批发', '站点名称'],
+    ['site.name', '凡晟首饰批发', '站点名称'],
     ['site.slogan', '源头工厂 · 按克批发 · 当日发货', '站点标语'],
     ['order.pay.timeout.minutes', '30', '【二期】待支付超时自动取消（分钟）'],
     ['order.auto.confirm.days', '7', '【二期】发货后自动确认收货（天）'],

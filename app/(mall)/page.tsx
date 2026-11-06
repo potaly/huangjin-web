@@ -133,7 +133,15 @@ export default function HomePage() {
           {/* 分类入口 */}
           {data.categories.length > 0 && (
             <section className="mx-3 mt-3 rounded-xl bg-white p-3 shadow-card">
-              <div className="grid grid-cols-5 gap-y-3">
+              {/* 列数随一级分类数量自适应：≤5 个用 5 列，6 个排成一行 6 列，7~8 个两行 4 列，更多用 5 列 */}
+              <div
+                className="grid gap-y-3"
+                style={{
+                  gridTemplateColumns: `repeat(${
+                    data.categories.length <= 5 ? 5 : data.categories.length === 6 ? 6 : data.categories.length <= 8 ? 4 : 5
+                  }, minmax(0, 1fr))`,
+                }}
+              >
                 {data.categories.slice(0, 10).map((c) => (
                   <Link
                     key={c.id}
