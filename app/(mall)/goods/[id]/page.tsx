@@ -155,7 +155,7 @@ export default function GoodsDetailPage() {
               点击复制
             </button>
             <p className="mt-2.5 rounded-lg bg-gold-50 px-3 py-2 text-[12px] leading-relaxed text-gold-800">
-              本站按克批发，仅展示参考工费，不含当日金价。如需总价与起订量，请点击下方「咨询客服」。
+              仅展示参考克重与工费，不含当日金价。如需总价与起订量，请点击下方「咨询客服」。
             </p>
           </section>
 
@@ -241,10 +241,6 @@ export default function GoodsDetailPage() {
               </div>
             </section>
           )}
-
-          <p className="px-6 py-6 text-center text-[11px] text-neutral-400">
-            — 二期将在此处上线加入购物车、按克下单与预估计价 —
-          </p>
 
           {/* 底部固定按钮栏：一期只有「咨询客服」 */}
           <div className="mall-fixed-bar safe-bottom border-t border-neutral-100 bg-white px-3 py-2.5">

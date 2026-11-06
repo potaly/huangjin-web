@@ -171,7 +171,7 @@ export default function HomePage() {
           {/* 推荐商品 */}
           {data.recommend.length > 0 && (
             <section className="mt-4">
-              <SectionTitle title="推荐款式" desc="现货按克批发" href="/goods?recommend=1" />
+              <SectionTitle title="推荐款式" desc="查看全部" href="/goods?recommend=1" />
               <div className="grid grid-cols-2 gap-2.5 px-3">
                 {data.recommend.map((p) => (
                   <ProductCard key={p.id} product={p} mode={data.stockDisplayMode} />
@@ -193,9 +193,9 @@ export default function HomePage() {
           )}
 
           <p className="px-6 pt-6 text-center text-[11px] leading-relaxed text-neutral-400">
-            本站所有商品按克批发，库存以克计（保留 3 位小数）。
+            商品图片与克重仅供参考，以实物为准。
             <br />
-            前台展示参考工费，当日金价与总价请联系客服。
+            当日金价与总价请联系客服。
           </p>
         </>
       )}

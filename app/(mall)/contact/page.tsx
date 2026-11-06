@@ -102,15 +102,9 @@ export default function ContactPage() {
               </div>
             )}
             <div className="flex gap-3">
-              <dt className="w-16 shrink-0 text-neutral-400">批发说明</dt>
+              <dt className="w-16 shrink-0 text-neutral-400">购买说明</dt>
               <dd className="flex-1 leading-relaxed text-neutral-800">
-                所有商品按克批发，库存以克计。前台展示参考工费，当日金价与总价请联系客服。
-              </dd>
-            </div>
-            <div className="flex gap-3">
-              <dt className="w-16 shrink-0 text-neutral-400">发货方式</dt>
-              <dd className="flex-1 leading-relaxed text-neutral-800">
-                顺丰保价到付 / 物流专线 / 水贝档口自提，发货前统一复称。
+                展示参考克重与工费，当日金价与总价请联系客服。
               </dd>
             </div>
           </dl>
@@ -120,10 +114,10 @@ export default function ContactPage() {
           <h2 className="mb-2 text-[15px] font-semibold text-neutral-900">采购流程</h2>
           <ol className="space-y-2.5">
             {[
-              ['浏览款式', '在首页或分类中查看款式、规格与库存克重'],
+              ['浏览款式', '在首页或分类中查看款式、克重与库存'],
               ['联系客服', '复制款号发给客服，获取当日金价与工费报价'],
               ['确认订单', '确认克重与规格，客服开单并安排配货'],
-              ['复称发货', '发货前统一复称，按实际克重结算，多退少补'],
+              ['安排发货', '确认款式与数量后，按约定方式配货发出'],
             ].map(([title, desc], i) => (
               <li key={title} className="flex gap-3">
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gold-500 text-[11px] font-medium text-white">
