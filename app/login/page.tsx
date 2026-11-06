@@ -12,6 +12,15 @@ export default function LoginPage() {
   )
 }
 
+/** 只允许跳回同源地址，避免开放重定向 */
+function safeTarget(redirect: string): string {
+  try {
+    const u = new URL(redirect, window.location.origin)
+    if (u.origin === window.location.origin) return u.pathname + u.search + u.hash
+  } catch {}
+  return '/'
+}
+
 function LoginForm() {
   const [phone, setPhone] = useState('')
   const [error, setError] = useState('')
@@ -30,7 +39,7 @@ function LoginForm() {
     try {
       const res = await api.post<{ token: string }>('/api/mall/auth/phone-login', { phone: phone.trim() })
       localStorage.setItem(MALL_TOKEN_KEY, res.token)
-      router.replace(redirect.startsWith('/') && !redirect.startsWith('//') ? redirect : '/')
+      router.replace(safeTarget(redirect))
     } catch (err) {
       setError(errMsg(err))
     } finally {
