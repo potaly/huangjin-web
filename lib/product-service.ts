@@ -77,6 +77,15 @@ function assertPublishable(product: Product, skus: Sku[]): void {
   if (!skus.some((s) => s.status === 1 && !s.deleted)) throw bad('上架前请至少启用一个 SKU')
 }
 
+/** 有待确认/已确认订单引用的 SKU 或商品不能删除 */
+export function assertNoOpenOrders(db: DB, ref: { skuId?: number; productId?: number }): void {
+  const hit = db.order.some(
+    (o) => !o.deleted && (o.status === 'PENDING' || o.status === 'CONFIRMED') &&
+      o.items.some((i) => (ref.skuId !== undefined && i.skuId === ref.skuId) || (ref.productId !== undefined && i.productId === ref.productId)),
+  )
+  if (hit) throw bad('该商品有未完成订单，不能删除')
+}
+
 function applySkuInputs(
   db: DB,
   product: Product,
@@ -91,6 +100,7 @@ function applySkuInputs(
     if (!input._deleted || !input.id) continue
     const sku = existing.find((s) => s.id === input.id)
     if (!sku) continue
+    assertNoOpenOrders(db, { skuId: sku.id })
     if (compareWeight(sku.stockWeight, 0) !== 0) {
       throw bad(`SKU「${sku.specName}」仍有 ${sku.stockWeight} g 库存，请先出库或盘点为 0 再删除`)
     }
