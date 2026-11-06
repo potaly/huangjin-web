@@ -15,8 +15,14 @@ export async function POST(req: Request) {
     if (!openid) return ok({ needPhone: true, bindTicket: null })
 
     const db = await loadDB()
-    const bound = db.mallUser.some((u) => !u.deleted && u.status === 1 && u.openid === openid)
+    const bound = db.mallUser.find((u) => !u.deleted && u.status === 1 && u.openid === openid)
     if (!bound) return ok({ needPhone: true, bindTicket: createBindTicket(openid) })
+
+    // 一小时内登录过则不重复写库
+    const last = bound.lastLoginAt ? Date.parse(bound.lastLoginAt) : 0
+    if (last && Date.now() - last < 60 * 60 * 1000) {
+      return ok({ token: createMallToken(bound.id, bound.role), user: userView(db, bound) })
+    }
 
     const result = await mutate((d) => {
       const user = loginByOpenid(d, openid)
