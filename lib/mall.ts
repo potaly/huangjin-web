@@ -208,8 +208,9 @@ export function categoryScope(db: DB, categoryId: number): number[] {
 export function publicSettings(db: DB) {
   const cfg = configMap(db)
   return {
-    siteName: cfg['site.name'] ?? '黄金首饰批发商城',
+    siteName: cfg['site.name'] ?? '凡晟珠宝',
     siteSlogan: cfg['site.slogan'] ?? '',
+    demoLabel: (cfg['site.demo.label'] ?? '').trim(),
     contactPhone: cfg['contact.phone'] ?? '',
     contactWechat: cfg['contact.wechat'] ?? '',
     contactWechatQrcode: cfg['contact.wechat.qrcode'] ?? '',

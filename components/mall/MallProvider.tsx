@@ -11,6 +11,8 @@ import { Sheet } from '@/components/ui'
 export interface PublicSettings {
   siteName: string
   siteSlogan: string
+  /** 演示版标识文字，空串表示不显示 */
+  demoLabel: string
   contactPhone: string
   contactWechat: string
   contactWechatQrcode: string
@@ -20,8 +22,9 @@ export interface PublicSettings {
 }
 
 const FALLBACK: PublicSettings = {
-  siteName: '黄金首饰批发商城',
+  siteName: '凡晟珠宝',
   siteSlogan: '',
+  demoLabel: '',
   contactPhone: '',
   contactWechat: '',
   contactWechatQrcode: '',

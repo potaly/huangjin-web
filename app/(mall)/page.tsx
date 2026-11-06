@@ -54,8 +54,13 @@ export default function HomePage() {
       {/* 顶部搜索 */}
       <header className="sticky top-0 z-30 bg-gradient-to-b from-gold-500 to-gold-400 px-3 pb-3 pt-3">
         <div className="mb-2.5 flex items-baseline justify-between">
-          <h1 className="text-[17px] font-semibold text-white">
+          <h1 className="flex items-center gap-1.5 text-[17px] font-semibold text-white">
             {data?.siteName ?? settings.siteName}
+            {(data?.demoLabel ?? settings.demoLabel) && (
+              <span className="rounded border border-white/75 px-1.5 text-[10px] font-normal leading-4">
+                {data?.demoLabel ?? settings.demoLabel}
+              </span>
+            )}
           </h1>
           <span className="text-[11px] text-white/85">{data?.siteSlogan ?? settings.siteSlogan}</span>
         </div>

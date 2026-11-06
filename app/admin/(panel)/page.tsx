@@ -64,7 +64,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <PageTitle title={`${me.realName}，欢迎回来`} desc="黄金首饰批发商城 · 一期工作台" />
+      <PageTitle title={`${me.realName}，欢迎回来`} desc="凡晟珠宝 · 一期工作台" />
 
       {data?.storageDriver === 'memory' && (
         <div className="mb-4 rounded-xl bg-amber-50 px-4 py-3 text-[13px] leading-relaxed text-amber-800 ring-1 ring-amber-100">

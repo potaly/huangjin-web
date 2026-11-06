@@ -18,7 +18,7 @@ const GROUPS: Array<{
   {
     title: '站点信息',
     desc: '前台顶部展示',
-    keys: ['site.name', 'site.slogan'],
+    keys: ['site.name', 'site.slogan', 'site.demo.label'],
   },
   {
     title: '客服与公司信息',
@@ -46,6 +46,7 @@ const GROUPS: Array<{
 const LABELS: Record<string, string> = {
   'site.name': '站点名称',
   'site.slogan': '站点标语',
+  'site.demo.label': '演示版标识（留空不显示）',
   'contact.phone': '客服电话',
   'contact.wechat': '客服微信号',
   'contact.wechat.qrcode': '客服微信二维码',

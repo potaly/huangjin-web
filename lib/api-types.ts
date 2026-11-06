@@ -98,6 +98,8 @@ export interface MallProductDetail {
 export interface MallHome {
   siteName: string
   siteSlogan: string
+  /** 演示版标识文字，空串表示不显示 */
+  demoLabel: string
   banners: MallBanner[]
   notices: MallNoticeCard[]
   popupNotice: MallNoticeCard | null

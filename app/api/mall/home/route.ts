@@ -37,8 +37,9 @@ export async function GET() {
       .map((p) => productCard(db, p, mode))
 
     return ok({
-      siteName: cfg['site.name'] ?? '黄金首饰批发商城',
+      siteName: cfg['site.name'] ?? '凡晟珠宝',
       siteSlogan: cfg['site.slogan'] ?? '',
+      demoLabel: (cfg['site.demo.label'] ?? '').trim(),
       banners,
       notices: notices.slice(0, 3).map(noticeCard),
       popupNotice: notices.find((n) => n.isPopup) ? noticeCard(notices.find((n) => n.isPopup)!) : null,

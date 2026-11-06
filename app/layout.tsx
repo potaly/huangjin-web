@@ -3,7 +3,7 @@ import './globals.css'
 import { ToastProvider } from '@/components/Toast'
 
 export const metadata: Metadata = {
-  title: '黄金首饰批发商城',
+  title: '凡晟珠宝',
   description:
     '面向全国批发客户的黄金首饰商城：足金、18K 金、铂金现货按克批发，免登录浏览款式、规格与库存克重，有意向请联系客服。',
   icons: {

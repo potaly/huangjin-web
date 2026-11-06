@@ -54,7 +54,7 @@ function LoginForm() {
           <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gold-500 text-lg font-bold text-white">
             金
           </span>
-          <h1 className="text-xl font-semibold text-neutral-900">黄金首饰批发商城</h1>
+          <h1 className="text-xl font-semibold text-neutral-900">凡晟珠宝 · 管理后台</h1>
           <p className="mt-1 text-[13px] text-neutral-500">管理后台 · 一期</p>
         </div>
 
