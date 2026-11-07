@@ -7,7 +7,7 @@
 // ────────────────────────────────────────────────────────────────
 
 import type { DB, Sku, StockLog, StockLogType, StockLevel } from './types'
-import { addWeight, compareWeight, roundWeight } from './num'
+import { addWeight, compareWeight, roundWeight, toMg } from './num'
 import { nextId } from './store'
 import { bad, notFound } from './api'
 
@@ -20,7 +20,10 @@ export function availableWeight(sku: Sku): number {
 export function availableQty(sku: Sku): number | null {
   const w = sku.refWeight
   if (typeof w !== 'number' || !(w > 0)) return null
-  return Math.max(0, Math.floor(availableWeight(sku) / w + 1e-6))
+  // 按毫克整数计算，与下单校验（order-service.sellableQty）口径一致，避免浮点误差
+  const unitMg = toMg(w)
+  if (unitMg <= 0) return null
+  return Math.max(0, Math.floor((toMg(sku.stockWeight) - toMg(sku.lockedWeight)) / unitMg))
 }
 
 /** 前台库存等级：可售为 0 售罄，低于预警克数为少量，否则充足 */
