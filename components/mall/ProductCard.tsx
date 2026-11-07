@@ -4,7 +4,7 @@ import Link from 'next/link'
 import type { MallProductCard } from '@/lib/api-types'
 import type { StockDisplayMode } from '@/lib/types'
 import { fmtLaborFee, fmtRefWeightShort, fmtWeight } from '@/lib/format'
-import { StockBadge, Tag } from '@/components/ui'
+import { StockBadge } from '@/components/ui'
 
 /** 双列卡片：主图、名称、克重 + 工费（最醒目）、库存；材质与款号只在详情页展示；不显示金价 / 总价 */
 export function ProductCard({
@@ -42,7 +42,7 @@ export function ProductCard({
       </div>
 
       <div className="space-y-1.5 p-2.5">
-        <h3 className="line-clamp-2 min-h-[38px] text-[13px] font-medium leading-[19px] text-neutral-900">
+        <h3 className="line-clamp-2 text-[13px] font-medium leading-[19px] text-neutral-900">
           {product.name}
         </h3>
 
@@ -64,25 +64,46 @@ export function ProductCard({
           </div>
         </div>
 
-        {product.skuCount > 1 && (
-          <div className="flex flex-wrap items-center gap-1">
-            <Tag>{product.skuCount} 个规格</Tag>
-          </div>
-        )}
-
-        <div className="flex items-center justify-between pt-0.5">
-          {mode === 'EXACT' && product.availableWeight !== undefined ? (
-            <span className="text-[12px] font-medium text-gold-700">
-              库存 {fmtWeight(product.availableWeight)} g
-            </span>
-          ) : (
-            <StockBadge level={product.stockLevel} />
-          )}
-          {mode === 'EXACT' && <StockBadge level={product.stockLevel} />}
+        {/* 库存：次要信息，单独一行；左侧状态点 + 件数，右侧规格数 */}
+        <div className="flex items-center justify-between pt-0.5 text-[12px] leading-none">
+          <StockLine product={product} mode={mode} />
+          {product.skuCount > 1 && <span className="shrink-0 text-neutral-400">{product.skuCount} 个规格</span>}
         </div>
       </div>
     </Link>
   )
+}
+
+const DOT: Record<MallProductCard['stockLevel'], string> = {
+  ENOUGH: 'bg-emerald-500',
+  LOW: 'bg-orange-500',
+  SOLD_OUT: 'bg-neutral-300',
+}
+
+function StockLine({ product, mode }: { product: MallProductCard; mode: StockDisplayMode }) {
+  const level = product.stockLevel
+  // 精确模式且能换算出件数：「● 库存 18 件」；少量时橙色「仅剩 3 件」
+  if (mode === 'EXACT' && typeof product.availableQty === 'number') {
+    const q = product.availableQty
+    return (
+      <span className="inline-flex items-center gap-1.5 text-neutral-500">
+        <i className={`h-1.5 w-1.5 rounded-full ${DOT[level]}`} />
+        {level === 'SOLD_OUT' ? (
+          '已售罄'
+        ) : level === 'LOW' ? (
+          <span className="font-medium text-orange-600">仅剩 {q} 件</span>
+        ) : (
+          <span>
+            库存 <b className="font-semibold text-neutral-800">{q}</b> 件
+          </span>
+        )}
+      </span>
+    )
+  }
+  if (mode === 'EXACT' && product.availableWeight !== undefined) {
+    return <span className="font-medium text-gold-700">库存 {fmtWeight(product.availableWeight)} g</span>
+  }
+  return <StockBadge level={level} />
 }
 
 export function ProductCardSkeleton() {

@@ -8,7 +8,7 @@
 // ────────────────────────────────────────────────────────────────
 
 import type { DB, Notice, Product, Sku, StockDisplayMode } from './types'
-import { availableWeight, productStockLevel, stockLevelOf } from './stock'
+import { availableQty, availableWeight, productStockLevel, stockLevelOf } from './stock'
 import { sanitizeHtml, htmlToText } from './sanitize'
 
 export function configMap(db: DB): Record<string, string> {
@@ -27,7 +27,7 @@ export function stockDisplayMode(db: DB): StockDisplayMode {
 function stockView(sku: Sku, mode: StockDisplayMode) {
   const level = stockLevelOf(sku)
   if (mode === 'LEVEL') return { level }
-  return { level, availableWeight: availableWeight(sku) }
+  return { level, availableWeight: availableWeight(sku), availableQty: availableQty(sku) }
 }
 
 /** 公告是否「已发布且在生效时间内」 */
@@ -96,6 +96,9 @@ export function productCard(db: DB, p: Product, mode: StockDisplayMode) {
 
   const totalAvailable = active.reduce((sum, s) => sum + availableWeight(s), 0)
   const level = productStockLevel(skus)
+  // 可售件数：各规格 可售克重 ÷ 单件克重 之和；任一规格没有参考克重则无法换算 → null
+  const qtys = active.map((s) => availableQty(s))
+  const totalQty = qtys.length && qtys.every((q) => q !== null) ? (qtys as number[]).reduce((a, b) => a + b, 0) : null
 
   return {
     id: p.id,
@@ -113,7 +116,9 @@ export function productCard(db: DB, p: Product, mode: StockDisplayMode) {
     skuCount: active.length,
     stockLevel: level,
     soldOut: level === 'SOLD_OUT',
-    ...(mode === 'EXACT' ? { availableWeight: Number(totalAvailable.toFixed(3)) } : {}),
+    ...(mode === 'EXACT'
+      ? { availableWeight: Number(totalAvailable.toFixed(3)), availableQty: totalQty }
+      : {}),
     createdAt: p.createdAt,
   }
 }

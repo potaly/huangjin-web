@@ -58,6 +58,8 @@ export interface MallProductCard {
   stockLevel: StockLevel
   soldOut: boolean
   availableWeight?: number
+  /** 可售件数（可售克重 ÷ 单件克重），仅精确模式返回；无法换算为 null */
+  availableQty?: number | null
   createdAt: string
 }
 
@@ -67,6 +69,8 @@ export interface MallSku {
   specName: string
   refWeight: number | null
   refQty: number | null
+  /** 可售件数（实时 = 可售克重 ÷ 单件克重，向下取整），仅精确模式返回 */
+  availableQty?: number | null
   level: StockLevel
   availableWeight?: number
 }

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-import Link from 'next/link'
 import { api, errMsg } from '@/lib/client'
 import type { MallProductDetail } from '@/lib/api-types'
 import { PageHeader } from '@/components/mall/MallShell'
@@ -196,7 +195,7 @@ export default function GoodsDetailPage() {
                     <p className="mt-0.5 truncate text-[11px] text-neutral-400">
                       {sku.skuCode}
                       {sku.refWeight ? ` · 参考 ${sku.refWeight} g/件` : ''}
-                      {sku.refQty ? ` · 约 ${sku.refQty} 件` : ''}
+                      {typeof sku.availableQty === 'number' ? ` · 库存 ${sku.availableQty} 件` : ''}
                     </p>
                   </div>
                   <div className="ml-3 shrink-0 text-right">
@@ -245,18 +244,6 @@ export default function GoodsDetailPage() {
           {/* 底部固定按钮栏：一期只有「咨询客服」 */}
           <div className="mall-fixed-bar safe-bottom border-t border-neutral-100 bg-white px-3 py-2.5">
             <div className="flex items-center gap-2.5">
-              <Link
-                href="/goods"
-                className="flex h-11 w-[84px] shrink-0 flex-col items-center justify-center rounded-xl bg-neutral-100 text-[11px] text-neutral-600"
-              >
-                <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden>
-                  <rect x="3" y="3" width="6" height="6" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                  <rect x="11" y="3" width="6" height="6" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                  <rect x="3" y="11" width="6" height="6" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                  <rect x="11" y="11" width="6" height="6" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                </svg>
-                全部款式
-              </Link>
               <button
                 type="button"
                 onClick={consult}

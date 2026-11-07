@@ -16,6 +16,13 @@ export function availableWeight(sku: Sku): number {
   return addWeight(sku.stockWeight, -sku.lockedWeight)
 }
 
+/** 可售件数 = 可售克重 ÷ 参考单件克重（向下取整）；没有参考克重时无法换算，返回 null */
+export function availableQty(sku: Sku): number | null {
+  const w = sku.refWeight
+  if (typeof w !== 'number' || !(w > 0)) return null
+  return Math.max(0, Math.floor(availableWeight(sku) / w + 1e-6))
+}
+
 /** 前台库存等级：可售为 0 售罄，低于预警克数为少量，否则充足 */
 export function stockLevelOf(sku: Sku): StockLevel {
   const available = availableWeight(sku)
