@@ -40,7 +40,7 @@
 | 位置 | 新增导出 | 来源 |
 |---|---|---|
 | `lib/product-service.ts` | `deleteProduct(db, id, session)`、`setProductStatus(db, id, status, session)` | PC 路由 `products/[id]`、`products/[id]/status` |
-| `lib/manage-query.ts`（新文件） | `productRows(db, filter)`、`productDetail(db, id)`、`stockRows(db, filter)`、`stockSummary(rows)` | PC 路由 `products`、`products/[id]`、`stocks` |
+| `lib/manage-query.ts`（新文件） | `filterProducts(db, filter)`、`productRow(db, product)`、`productDetail(db, id)`、`productOptions(db)`、`stockRows(db, filter)`、`stockSummary(rows)` | PC 路由 `products`、`products/[id]`、`stocks` |
 | `lib/stock-ops.ts`（新文件） | `parseStockOp(type, body)`、`runStockOp(db, type, parsed, operator)`、`STOCK_OP_LABEL` | `lib/stock-handler.ts` |
 
 `lib/stock.ts` 不改。服务函数只做业务校验和数据变更，`addLog` 留在各自路由里，因为两端的 `requestUri` 不同。
@@ -61,7 +61,7 @@
 
 | 方法与路径 | 说明 |
 |---|---|
-| `GET products?keyword=&status=&pageNum=&pageSize=` | 商品分页，返回 `productRows` 的分页结果 |
+| `GET products?keyword=&status=&pageNum=&pageSize=` | 商品分页，返回 `filterProducts` + `productRow` 的分页结果 |
 | `POST products` | 调 `createProduct`，日志「商品/新增」 |
 | `GET products/[id]` | 调 `productDetail` |
 | `PUT products/[id]` | 调 `updateProduct`，日志「商品/编辑」 |
@@ -127,7 +127,7 @@
 
 ### 4.4 `pages/manage-stock-logs`
 
-类型切换（全部、入库、出库、盘点调整、订单出库、订单回库），搜索框，开始和结束日期选择。卡片显示商品、规格、类型、变动克重、前后克重、原因、操作人、时间。可带 `skuId` 进入。触底加载下一页。
+类型切换（全部、入库、出库、盘点调整、下单扣减、取消回库），搜索框，开始和结束日期选择。卡片显示商品、规格、类型、变动克重、前后克重、原因、操作人、时间。可带 `skuId` 进入。触底加载下一页。
 
 ### 4.5 传图
 
@@ -151,7 +151,7 @@
 - `mallActor` 的字段映射。
 - `deleteProduct`：已上架、有未完成订单、仍有库存时拒绝；成功时商品和 SKU 软删除。
 - `setProductStatus`：无主图、无启用 SKU 时拒绝上架。
-- `productRows`、`stockRows`、`stockSummary` 的筛选和汇总。
+- `filterProducts`、`productRow`、`productOptions`、`stockRows`、`stockSummary` 的筛选和汇总。
 - `parseStockOp`：非法克重、缺原因；`runStockOp`：入库、出库、盘点的克重变化，操作人落入流水。
 - `sniffImageMime`：JPEG、PNG、WEBP 识别，SVG 和其他内容返回 null。
 
