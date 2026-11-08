@@ -1,8 +1,8 @@
 // GET/PUT/DELETE /api/admin/products/{id}
-import { addLog, handle, notFound, ok, readJson, requireAdmin, requireId } from '@/lib/api'
+import { addLog, handle, ok, readJson, requireAdmin, requireId } from '@/lib/api'
 import { loadDB, mutate } from '@/lib/store'
 import { deleteProduct, updateProduct, type ProductInput } from '@/lib/product-service'
-import { availableWeight, stockLevelOf } from '@/lib/stock'
+import { productDetail } from '@/lib/manage-query'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,28 +10,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   return handle(async () => {
     requireAdmin('product')
     const db = await loadDB()
-    const id = requireId(params.id)
-    const product = db.product.find((p) => p.id === id && !p.deleted)
-    if (!product) throw notFound('商品不存在')
-
-    const skus = db.productSku
-      .filter((s) => !s.deleted && s.productId === id)
-      .sort((a, b) => a.id - b.id)
-      .map((s) => ({
-        id: s.id,
-        skuCode: s.skuCode,
-        specName: s.specName,
-        refWeight: s.refWeight,
-        refQty: s.refQty,
-        stockWeight: s.stockWeight,
-        lockedWeight: s.lockedWeight,
-        availableWeight: availableWeight(s),
-        warnWeight: s.warnWeight,
-        status: s.status,
-        level: stockLevelOf(s),
-      }))
-
-    return ok({ ...product, skus })
+    return ok(productDetail(db, requireId(params.id)))
   })
 }
 
