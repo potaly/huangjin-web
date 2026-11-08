@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { addUser, emptyDB } from './helpers'
-import { loginRequired, resolveMallUser } from '../lib/mall-auth'
+import { loginRequired, mallActor, resolveMallUser } from '../lib/mall-auth'
 
 test('登录门槛按系统参数开关', () => {
   const db = emptyDB()
@@ -18,4 +18,14 @@ test('resolveMallUser：会话有效且用户启用才返回，以库里最新�
   u.status = 0
   assert.equal(resolveMallUser(db, session), null)
   assert.equal(resolveMallUser(db, null), null)
+})
+
+test('mallActor：操作人带小程序标记，不暴露手机号', () => {
+  const db = emptyDB()
+  const u = addUser(db, { phone: '13800000011', role: 'SALES', name: '张三' })
+  const actor = mallActor(u)
+  assert.equal(actor.id, u.id)
+  assert.equal(actor.username, `mall:${u.id}`)
+  assert.equal(actor.realName, '张三（小程序）')
+  assert.equal(actor.roleCode, 'OPERATOR')
 })

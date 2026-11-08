@@ -3,7 +3,7 @@ import { headers } from 'next/headers'
 import { forbidden, unauthorized } from './api'
 import { parseMallToken } from './mall-token'
 import { findUser } from './mall-user-service'
-import type { DB, MallRole, MallSession, MallUser } from './types'
+import type { AdminSession, DB, MallRole, MallSession, MallUser } from './types'
 
 export function loginRequired(db: DB): boolean {
   const c = db.sysConfig.find((x) => !x.deleted && x.configKey === 'mall.login.required')
@@ -33,4 +33,18 @@ export function requireMallUser(db: DB, roles?: MallRole[]): MallUser {
 /** 商品类接口的门槛：开启登录要求时必须是已登录的启用用户 */
 export function requireMallAccess(db: DB): void {
   if (loginRequired(db)) requireMallUser(db)
+}
+
+/** 商品与库存管理接口允许的角色 */
+export const MANAGE_ROLES: MallRole[] = ['OWNER', 'SALES']
+
+/** 把小程序用户转换成服务函数和操作日志需要的会话结构 */
+export function mallActor(user: MallUser): AdminSession {
+  return {
+    id: user.id,
+    username: `mall:${user.id}`,
+    realName: `${user.name}（小程序）`,
+    roleCode: 'OPERATOR',
+    exp: 0,
+  }
 }
