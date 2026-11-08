@@ -1,5 +1,5 @@
 // PUT /api/mall/manage/products/batch-status — 批量上下架
-import { addLog, bad, handle, ok, readJson, toStatus } from '@/lib/api'
+import { addLog, bad, handle, ok, readJson, strictStatus } from '@/lib/api'
 import { MANAGE_ROLES, mallActor, requireMallUser } from '@/lib/mall-auth'
 import { batchSetProductStatus } from '@/lib/product-service'
 import { mutate } from '@/lib/store'
@@ -14,8 +14,8 @@ export async function PUT(req: Request) {
       const actor = mallActor(requireMallUser(db, MANAGE_ROLES))
       const ids = Array.isArray(body.ids) ? body.ids.map(Number).filter(Number.isInteger) : []
       if (ids.length === 0) throw bad('请先选择商品')
-      if (Number(body.status) !== 0 && Number(body.status) !== 1) throw bad('状态不正确')
-      const status = toStatus(body.status, 0)
+      const status = strictStatus(body.status)
+      if (status === null) throw bad('状态不正确')
       const r = batchSetProductStatus(db, ids, status, actor)
       addLog(db, actor, {
         module: '商品', action: status === 1 ? '批量上架' : '批量下架',

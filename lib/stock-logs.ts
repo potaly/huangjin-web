@@ -25,8 +25,9 @@ export function filterLogs(logs: StockLog[], url: URL): StockLog[] {
     rows = rows.filter((l) => new Date(l.createdAt).getTime() >= from)
   }
   if (endDate) {
-    const to = new Date(`${endDate}T23:59:59+08:00`).getTime()
-    rows = rows.filter((l) => new Date(l.createdAt).getTime() <= to)
+    // 次日 00:00（上海）为开区间上界，包含当天最后一秒内的记录
+    const to = new Date(`${endDate}T00:00:00+08:00`).getTime() + 24 * 3600 * 1000
+    rows = rows.filter((l) => new Date(l.createdAt).getTime() < to)
   }
   return rows.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 }

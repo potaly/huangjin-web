@@ -52,3 +52,12 @@ test('filterLogs：日期按上海时间，UTC 11-07 16:30 属于上海 11-08', 
   assert.equal(hit.length, 1)
   assert.equal(filterLogs(logs, new URL('http://x/y?startDate=2026-11-07&endDate=2026-11-07')).length, 0)
 })
+
+test('filterLogs：结束日期包含上海 23:59:59.500，不含次日 00:00:00', () => {
+  const logs = [
+    row({ id: 1, createdAt: '2026-11-08T15:59:59.500Z' }), // 上海 11-08 23:59:59.500
+    row({ id: 2, createdAt: '2026-11-08T16:00:00.000Z' }), // 上海 11-09 00:00:00
+  ]
+  const hit = filterLogs(logs, new URL('http://x/y?startDate=2026-11-08&endDate=2026-11-08'))
+  assert.deepEqual(hit.map((l) => l.id), [1])
+})

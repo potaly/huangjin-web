@@ -154,6 +154,11 @@ export function toStatus(value: unknown, fallback: 0 | 1 = 1): 0 | 1 {
   return Number(value) === 0 ? 0 : Number(value) === 1 ? 1 : fallback
 }
 
+/** 严格状态：只有数字 0 或 1 合法，其他一律返回 null */
+export function strictStatus(value: unknown): 0 | 1 | null {
+  return value === 0 || value === 1 ? value : null
+}
+
 export function toBool(value: unknown): boolean {
   return value === true || value === 'true' || value === 1 || value === '1'
 }
