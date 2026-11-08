@@ -116,6 +116,21 @@ test('updateNotice：改为发布且无 publishAt 时补，且正文被净化', 
   assert.ok(!/onerror/i.test(n.contentHtml ?? ''))
 })
 
+test('updateNotice：草稿改发布且 publishAt 为空串时补当前时间', () => {
+  const db = emptyDB()
+  const n = createNotice(db, { title: 'a', status: 0 }, actor)
+  updateNotice(db, n.id, { status: 1, publishAt: '' }, actor)
+  assert.ok(n.publishAt)
+})
+
+test('updateNotice：已发布公告清空生效时间后仍有 publishAt', () => {
+  const db = emptyDB()
+  const n = createNotice(db, { title: 'a', status: 1, publishAt: '2030-01-01T00:00:00.000Z' }, actor)
+  updateNotice(db, n.id, { publishAt: '' }, actor)
+  assert.ok(n.publishAt)
+  assert.notEqual(n.publishAt, '2030-01-01T00:00:00.000Z')
+})
+
 test('deleteNotice / updateNotice：不存在报错', () => {
   const db = emptyDB()
   assert.throws(() => updateNotice(db, 1, {}, actor), /公告不存在/)

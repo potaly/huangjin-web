@@ -248,7 +248,6 @@ export function updateNotice(db: DB, id: number, body: NoticeInput, session: Adm
   if (body.status !== undefined) {
     const next = toInt(body.status, notice.status)
     if ([0, 1, 2].includes(next)) notice.status = next as 0 | 1 | 2
-    if (notice.status === 1 && !notice.publishAt) notice.publishAt = new Date().toISOString()
   }
   if (body.publishAt !== undefined) {
     notice.publishAt = body.publishAt ? new Date(String(body.publishAt)).toISOString() : undefined
@@ -256,6 +255,8 @@ export function updateNotice(db: DB, id: number, body: NoticeInput, session: Adm
   if (body.expireAt !== undefined) {
     notice.expireAt = body.expireAt ? new Date(String(body.expireAt)).toISOString() : undefined
   }
+  // 发布状态必须有生效时间（放最后，避免被空串清掉）
+  if (notice.status === 1 && !notice.publishAt) notice.publishAt = new Date().toISOString()
 
   notice.updatedAt = new Date().toISOString()
   notice.updatedBy = session.username
