@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { addProduct, emptyDB } from './helpers'
 import {
-  filterProducts, productDetail, productOptions, productRow, stockRows, stockSummary,
+  dashboardData, filterProducts, productDetail, productOptions, productRow, stockRows, stockSummary,
 } from '../lib/manage-query'
 
 test('filterProducts：按关键词和状态筛选，排除已删除，按 sort 升序', () => {
@@ -84,4 +84,23 @@ test('stockRows 和 stockSummary：关键词、预警筛选和汇总', () => {
   assert.equal(summary.lockedWeight, 1)
   assert.equal(summary.availableWeight, 10)
   assert.equal(summary.warnCount, 1)
+})
+
+test('dashboardData：统计商品、SKU、库存与预警', () => {
+  const db = emptyDB()
+  db.goldMaterial.push({ id: 1, code: 'AU999', name: '足金', sort: 0, status: 1, createdAt: '', updatedAt: '' })
+  addProduct(db, { status: 1, refWeight: 5, stockQty: 2 })
+  addProduct(db, { status: 0, refWeight: 5, stockQty: 1 })
+  const goneRow = addProduct(db)
+  goneRow.product.deleted = true
+  goneRow.sku.deleted = true
+  const d = dashboardData(db)
+  assert.equal(d.productTotal, 2)
+  assert.equal(d.productOnSale, 1)
+  assert.equal(d.productOffSale, 1)
+  assert.equal(d.skuTotal, 2)
+  assert.equal(d.stockWeightTotal, 15)
+  assert.equal(d.byMaterial.length, 1)
+  assert.equal(d.byMaterial[0].productCount, 2)
+  assert.equal(typeof d.storageDriver, 'string')
 })

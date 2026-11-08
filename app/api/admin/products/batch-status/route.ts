@@ -1,5 +1,6 @@
 // PUT /api/admin/products/batch-status — 批量上下架
 import { addLog, bad, handle, ok, readJson, requireAdmin, toStatus } from '@/lib/api'
+import { batchSetProductStatus } from '@/lib/product-service'
 import { mutate } from '@/lib/store'
 
 export const dynamic = 'force-dynamic'
@@ -13,39 +14,12 @@ export async function PUT(req: Request) {
     const status = toStatus(body.status, 0)
 
     const result = await mutate((db) => {
-      const succeeded: number[] = []
-      const skipped: Array<{ id: number; name: string; reason: string }> = []
-
-      for (const id of ids) {
-        const product = db.product.find((p) => p.id === id && !p.deleted)
-        if (!product) {
-          skipped.push({ id, name: `#${id}`, reason: '商品不存在' })
-          continue
-        }
-        if (status === 1) {
-          if (!product.cover) {
-            skipped.push({ id, name: product.name, reason: '缺少主图' })
-            continue
-          }
-          const hasActiveSku = db.productSku.some(
-            (s) => !s.deleted && s.productId === id && s.status === 1,
-          )
-          if (!hasActiveSku) {
-            skipped.push({ id, name: product.name, reason: '没有启用的 SKU' })
-            continue
-          }
-        }
-        product.status = status
-        product.updatedAt = new Date().toISOString()
-        product.updatedBy = session.username
-        succeeded.push(id)
-      }
-
+      const r = batchSetProductStatus(db, ids, status, session)
       addLog(db, session, {
         module: '商品', action: status === 1 ? '批量上架' : '批量下架',
         requestUri: '/api/admin/products/batch-status', requestBody: { ids, status },
       })
-      return { succeeded, skipped }
+      return r
     })
 
     const msg = result.skipped.length

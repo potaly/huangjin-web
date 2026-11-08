@@ -357,3 +357,40 @@ export function setProductStatus(db: DB, id: number, status: 0 | 1, session: Adm
   product.updatedBy = session.username
   return product
 }
+
+/** 批量上下架：上架时要求有主图和启用的 SKU，不满足的跳过并给出原因 */
+export function batchSetProductStatus(
+  db: DB,
+  ids: number[],
+  status: 0 | 1,
+  session: AdminSession,
+): { succeeded: number[]; skipped: Array<{ id: number; name: string; reason: string }> } {
+  const succeeded: number[] = []
+  const skipped: Array<{ id: number; name: string; reason: string }> = []
+
+  for (const id of ids) {
+    const product = db.product.find((p) => p.id === id && !p.deleted)
+    if (!product) {
+      skipped.push({ id, name: `#${id}`, reason: '商品不存在' })
+      continue
+    }
+    if (status === 1) {
+      if (!product.cover) {
+        skipped.push({ id, name: product.name, reason: '缺少主图' })
+        continue
+      }
+      const hasActiveSku = db.productSku.some(
+        (s) => !s.deleted && s.productId === id && s.status === 1,
+      )
+      if (!hasActiveSku) {
+        skipped.push({ id, name: product.name, reason: '没有启用的 SKU' })
+        continue
+      }
+    }
+    product.status = status
+    product.updatedAt = new Date().toISOString()
+    product.updatedBy = session.username
+    succeeded.push(id)
+  }
+  return { succeeded, skipped }
+}

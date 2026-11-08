@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { addProduct, emptyDB } from './helpers'
-import { deleteProduct, setProductStatus, updateProduct } from '../lib/product-service'
+import { batchSetProductStatus, deleteProduct, setProductStatus, updateProduct } from '../lib/product-service'
 import type { AdminSession, Order } from '../lib/types'
 
 const actor: AdminSession = { id: 1, username: 'mall:1', realName: '张三（小程序）', roleCode: 'OPERATOR', exp: 0 }
@@ -73,4 +73,28 @@ test('updateProduct：不能通过商品 A 修改商品 B 的 SKU', () => {
   )
   assert.equal(b.sku.skuCode, before.skuCode)
   assert.equal(b.sku.specName, before.specName)
+})
+
+test('batchSetProductStatus：上架时缺主图、无启用 SKU、不存在都跳过，其余成功', () => {
+  const db = emptyDB()
+  const ok1 = addProduct(db, { status: 0 }).product
+  const noCover = addProduct(db, { status: 0 }).product
+  noCover.cover = ''
+  const noSku = addProduct(db, { status: 0 })
+  noSku.sku.status = 0
+  const r = batchSetProductStatus(db, [ok1.id, noCover.id, noSku.product.id, 99999], 1, actor)
+  assert.deepEqual(r.succeeded, [ok1.id])
+  assert.deepEqual(r.skipped.map((s) => s.reason), ['缺少主图', '没有启用的 SKU', '商品不存在'])
+  assert.equal(ok1.status, 1)
+  assert.equal(ok1.updatedBy, 'mall:1')
+  assert.equal(noCover.status, 0)
+})
+
+test('batchSetProductStatus：下架不校验主图和 SKU', () => {
+  const db = emptyDB()
+  const p = addProduct(db, { status: 1 }).product
+  p.cover = ''
+  const r = batchSetProductStatus(db, [p.id], 0, actor)
+  assert.deepEqual(r.succeeded, [p.id])
+  assert.equal(p.status, 0)
 })
