@@ -29,6 +29,21 @@ test('saveConfigs：stock.display.mode 只能是 EXACT 或 LEVEL', () => {
   assert.equal(saveConfigs(db, [{ configKey: 'stock.display.mode', configValue: 'LEVEL' }], actor), 1)
 })
 
+test('saveConfigs：非法项在后时整批不写入，已有键不变', () => {
+  const db = emptyDB()
+  saveConfigs(db, [{ configKey: 'old', configValue: '1' }], actor)
+  assert.throws(
+    () => saveConfigs(db, [
+      { configKey: 'new.key', configValue: 'v' },
+      { configKey: 'old', configValue: '2' },
+      { configKey: 'stock.display.mode', configValue: 'X' },
+    ], actor),
+    /EXACT 或 LEVEL/,
+  )
+  assert.equal(db.sysConfig.find((c) => c.configKey === 'new.key'), undefined)
+  assert.equal(db.sysConfig.find((c) => c.configKey === 'old')!.configValue, '1')
+})
+
 test('saveConfigs：空 items 报错', () => {
   assert.throws(() => saveConfigs(emptyDB(), [], actor), /没有需要保存的参数/)
 })

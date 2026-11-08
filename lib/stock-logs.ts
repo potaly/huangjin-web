@@ -21,11 +21,11 @@ export function filterLogs(logs: StockLog[], url: URL): StockLog[] {
   if (type) rows = rows.filter((l) => l.type === type)
   if (skuId) rows = rows.filter((l) => l.skuId === skuId)
   if (startDate) {
-    const from = new Date(`${startDate}T00:00:00`).getTime()
+    const from = new Date(`${startDate}T00:00:00+08:00`).getTime()
     rows = rows.filter((l) => new Date(l.createdAt).getTime() >= from)
   }
   if (endDate) {
-    const to = new Date(`${endDate}T23:59:59`).getTime()
+    const to = new Date(`${endDate}T23:59:59+08:00`).getTime()
     rows = rows.filter((l) => new Date(l.createdAt).getTime() <= to)
   }
   return rows.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -37,6 +37,11 @@ const HEADERS = [
 ]
 
 const cell = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`
+/** 文本单元格：以公式触发字符开头时加单引号，防 CSV 注入 */
+const textCell = (v: unknown) => {
+  const s = String(v ?? '')
+  return cell(/^[=+\-@\t\r]/.test(s) ? `'${s}` : s)
+}
 
 /** 库存流水 CSV 文本，带 BOM 保证 Excel 正确识别 UTF-8 中文 */
 export function stockLogsCsv(logs: StockLog[]): string {
@@ -44,18 +49,18 @@ export function stockLogsCsv(logs: StockLog[]): string {
   for (const l of logs) {
     lines.push(
       [
-        new Date(l.createdAt).toLocaleString('zh-CN'),
-        l.productName,
-        l.skuCode,
-        l.specName,
-        STOCK_LOG_TYPE_LABEL[l.type] ?? l.type,
-        l.changeWeight.toFixed(3),
-        l.beforeWeight.toFixed(3),
-        l.afterWeight.toFixed(3),
-        l.refNo ?? '',
-        l.reason ?? '',
-        l.operator,
-      ].map(cell).join(','),
+        cell(new Date(l.createdAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })),
+        textCell(l.productName),
+        textCell(l.skuCode),
+        textCell(l.specName),
+        cell(STOCK_LOG_TYPE_LABEL[l.type] ?? l.type),
+        cell(l.changeWeight.toFixed(3)),
+        cell(l.beforeWeight.toFixed(3)),
+        cell(l.afterWeight.toFixed(3)),
+        textCell(l.refNo ?? ''),
+        textCell(l.reason ?? ''),
+        textCell(l.operator),
+      ].join(','),
     )
   }
   return `\uFEFF${lines.join('\r\n')}`
