@@ -132,7 +132,7 @@ function applySkuInputs(
     if (warnWeight < 0) throw bad('预警克数不能为负数')
 
     if (input.id) {
-      const sku = db.productSku.find((s) => s.id === input.id && !s.deleted)
+      const sku = db.productSku.find((s) => s.id === input.id && s.productId === product.id && !s.deleted)
       if (!sku) throw notFound(`SKU #${input.id} 不存在`)
       sku.skuCode = skuCode
       sku.specName = specName

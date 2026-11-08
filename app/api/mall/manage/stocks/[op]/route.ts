@@ -12,10 +12,11 @@ export async function POST(req: Request, { params }: { params: { op: string } })
   return handle(async () => {
     const type = OP_TYPES[params.op]
     if (!type) throw notFound('不支持的库存操作')
-    const input = parseStockOp(type, await readJson<StockOpBody>(req))
+    const body = await readJson<StockOpBody>(req)
 
     const log = await mutate((db) => {
       const actor = mallActor(requireMallUser(db, MANAGE_ROLES))
+      const input = parseStockOp(type, body)
       const result = runStockOp(db, type, input, actor.realName)
       addLog(db, actor, {
         module: '库存', action: STOCK_OP_LABEL[type],

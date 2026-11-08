@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { addProduct, emptyDB } from './helpers'
-import { deleteProduct, setProductStatus } from '../lib/product-service'
+import { deleteProduct, setProductStatus, updateProduct } from '../lib/product-service'
 import type { AdminSession, Order } from '../lib/types'
 
 const actor: AdminSession = { id: 1, username: 'mall:1', realName: '张三（小程序）', roleCode: 'OPERATOR', exp: 0 }
@@ -58,4 +58,19 @@ test('setProductStatus：上架和下架成功', () => {
   assert.equal(product.status, 1)
   setProductStatus(db, product.id, 0, actor)
   assert.equal(product.status, 0)
+})
+
+test('updateProduct：不能通过商品 A 修改商品 B 的 SKU', () => {
+  const db = emptyDB()
+  const a = addProduct(db, { status: 0 })
+  const b = addProduct(db, { status: 0 })
+  const before = { ...b.sku }
+  assert.throws(
+    () => updateProduct(db, a.product.id, {
+      skus: [{ id: b.sku.id, skuCode: 'HACK-01', specName: '被改', status: 1 }],
+    }, actor),
+    new RegExp(`SKU #${b.sku.id} 不存在`),
+  )
+  assert.equal(b.sku.skuCode, before.skuCode)
+  assert.equal(b.sku.specName, before.specName)
 })
