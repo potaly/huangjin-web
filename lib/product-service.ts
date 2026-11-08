@@ -317,3 +317,43 @@ export function copyProduct(db: DB, id: number, session: AdminSession): Product 
   })
   return product
 }
+
+/** 删除商品：必须已下架、无未完成订单、所有 SKU 库存为 0 */
+export function deleteProduct(db: DB, id: number, session: AdminSession): Product {
+  const product = db.product.find((p) => p.id === id && !p.deleted)
+  if (!product) throw notFound('商品不存在')
+  if (product.status === 1) throw bad('请先下架商品再删除')
+  assertNoOpenOrders(db, { productId: id })
+
+  const skus = db.productSku.filter((s) => !s.deleted && s.productId === id)
+  const withStock = skus.filter((s) => s.stockWeight > 0)
+  if (withStock.length > 0) {
+    throw bad(`该商品下 ${withStock.length} 个 SKU 仍有库存，请先出库或盘点为 0`)
+  }
+
+  product.deleted = true
+  product.updatedAt = new Date().toISOString()
+  product.updatedBy = session.username
+  for (const sku of skus) {
+    sku.deleted = true
+    sku.updatedAt = product.updatedAt
+  }
+  return product
+}
+
+/** 上架 / 下架；上架前校验主图和启用 SKU */
+export function setProductStatus(db: DB, id: number, status: 0 | 1, session: AdminSession): Product {
+  const product = db.product.find((p) => p.id === id && !p.deleted)
+  if (!product) throw notFound('商品不存在')
+  if (status === 1) {
+    if (!product.cover) throw bad('上架前请先上传主图')
+    const hasActiveSku = db.productSku.some(
+      (s) => !s.deleted && s.productId === id && s.status === 1,
+    )
+    if (!hasActiveSku) throw bad('上架前请至少启用一个 SKU')
+  }
+  product.status = status
+  product.updatedAt = new Date().toISOString()
+  product.updatedBy = session.username
+  return product
+}
