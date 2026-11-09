@@ -11,20 +11,13 @@ import { useToast } from '@/components/Toast'
 import { ErrorBox, Loading, Tag } from '@/components/ui'
 import { fmtLaborFee, fmtRefWeightShort, fmtWeightShort } from '@/lib/format'
 import { copyText } from '@/lib/clipboard'
-import { mainActionLabel, productStockDisplay, skuStockDisplay, type StockTone } from '@/lib/stock-display'
+import { mainActionLabel, skuStockDisplay, type StockTone } from '@/lib/stock-display'
 
 const TONE_TEXT: Record<StockTone, string> = {
   ENOUGH: 'text-emerald-600',
   LOW: 'text-orange-600',
   SOLD_OUT: 'text-neutral-500',
   OFF_SALE: 'text-neutral-600',
-}
-
-const TONE_BG: Record<StockTone, string> = {
-  ENOUGH: 'bg-emerald-50',
-  LOW: 'bg-orange-50',
-  SOLD_OUT: 'bg-neutral-100',
-  OFF_SALE: 'bg-neutral-100',
 }
 
 export default function GoodsDetailPage() {
@@ -155,8 +148,6 @@ export default function GoodsDetailPage() {
               )
             })()}
 
-            <ProductStockBar product={product} />
-
             <button
               type="button"
               onClick={copyStyleNo}
@@ -280,23 +271,6 @@ export default function GoodsDetailPage() {
             </div>
           </div>
         </>
-      )}
-    </div>
-  )
-}
-
-function ProductStockBar({ product }: { product: MallProductDetail }) {
-  const stock = productStockDisplay(product)
-  return (
-    <div className={`mt-2 flex items-baseline gap-1 rounded-xl px-4 py-2.5 ${TONE_BG[stock.tone]} ${TONE_TEXT[stock.tone]}`}>
-      {stock.qty !== null ? (
-        <>
-          <span className="text-[13px]">{stock.prefix}</span>
-          <span className="text-[24px] font-semibold leading-none">{stock.qty}</span>
-          <span className="text-[13px]">件现货</span>
-        </>
-      ) : (
-        <span className="text-[15px] font-semibold">{stock.word}</span>
       )}
     </div>
   )
