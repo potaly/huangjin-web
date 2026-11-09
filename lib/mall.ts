@@ -8,7 +8,7 @@
 // ────────────────────────────────────────────────────────────────
 
 import type { DB, Notice, Product, Sku, StockDisplayMode } from './types'
-import { availableQty, availableWeight, productStockLevel, stockLevelOf } from './stock'
+import { availableQty, availableWeight, mallProductStockLevel, mallStockLevelOf } from './stock'
 import { sanitizeHtml, htmlToText } from './sanitize'
 
 export function configMap(db: DB): Record<string, string> {
@@ -25,7 +25,7 @@ export function stockDisplayMode(db: DB): StockDisplayMode {
 
 /** 按 stock.display.mode 返回克数或等级，EXACT 下同时给出等级便于标色 */
 function stockView(sku: Sku, mode: StockDisplayMode) {
-  const level = stockLevelOf(sku)
+  const level = mallStockLevelOf(sku)
   if (mode === 'LEVEL') return { level }
   return { level, availableWeight: availableWeight(sku), availableQty: availableQty(sku) }
 }
@@ -95,7 +95,7 @@ export function productCard(db: DB, p: Product, mode: StockDisplayMode) {
     .filter((w): w is number => typeof w === 'number' && w > 0)
 
   const totalAvailable = active.reduce((sum, s) => sum + availableWeight(s), 0)
-  const level = productStockLevel(skus)
+  const level = mallProductStockLevel(skus)
   // 可售件数：各规格 可售克重 ÷ 单件克重 之和；任一规格没有参考克重则无法换算 → null
   const qtys = active.map((s) => availableQty(s))
   const totalQty = qtys.length && qtys.every((q) => q !== null) ? (qtys as number[]).reduce((a, b) => a + b, 0) : null
@@ -150,7 +150,7 @@ export function productDetail(db: DB, p: Product, mode: StockDisplayMode) {
     attrs: p.attrs ?? [],
     detailHtml: sanitizeHtml(p.detailHtml),
     isRecommend: p.isRecommend,
-    stockLevel: productStockLevel(skusOf(db, p.id)),
+    stockLevel: mallProductStockLevel(skusOf(db, p.id)),
     stockDisplayMode: mode,
     skus: skus.map((s) => ({
       id: s.id,

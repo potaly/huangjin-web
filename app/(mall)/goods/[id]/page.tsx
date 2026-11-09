@@ -8,9 +8,24 @@ import { PageHeader } from '@/components/mall/MallShell'
 import { ProductCard } from '@/components/mall/ProductCard'
 import { useMall } from '@/components/mall/MallProvider'
 import { useToast } from '@/components/Toast'
-import { ErrorBox, Loading, StockBadge, Tag } from '@/components/ui'
-import { fmtLaborFee, fmtRefWeightShort, fmtWeight } from '@/lib/format'
+import { ErrorBox, Loading, Tag } from '@/components/ui'
+import { fmtLaborFee, fmtRefWeightShort, fmtWeightShort } from '@/lib/format'
 import { copyText } from '@/lib/clipboard'
+import { mainActionLabel, productStockDisplay, skuStockDisplay, type StockTone } from '@/lib/stock-display'
+
+const TONE_TEXT: Record<StockTone, string> = {
+  ENOUGH: 'text-emerald-600',
+  LOW: 'text-orange-600',
+  SOLD_OUT: 'text-neutral-500',
+  OFF_SALE: 'text-neutral-600',
+}
+
+const TONE_BG: Record<StockTone, string> = {
+  ENOUGH: 'bg-emerald-50',
+  LOW: 'bg-orange-50',
+  SOLD_OUT: 'bg-neutral-100',
+  OFF_SALE: 'bg-neutral-100',
+}
 
 export default function GoodsDetailPage() {
   const params = useParams<{ id: string }>()
@@ -114,7 +129,6 @@ export default function GoodsDetailPage() {
             <div className="mt-2 flex flex-wrap items-center gap-1.5">
               <Tag tone="gold">{product.materialName}</Tag>
               {product.purity && <Tag>成色 {product.purity}</Tag>}
-              <StockBadge level={product.stockLevel} />
             </div>
 
             {/* 最重要的两个信息：克重、工费 */}
@@ -141,6 +155,8 @@ export default function GoodsDetailPage() {
               )
             })()}
 
+            <ProductStockBar product={product} />
+
             <button
               type="button"
               onClick={copyStyleNo}
@@ -155,6 +171,58 @@ export default function GoodsDetailPage() {
             </button>
             <p className="mt-2.5 rounded-lg bg-gold-50 px-3 py-2 text-[12px] leading-relaxed text-gold-800">
               仅展示参考克重与工费，不含当日金价。如需总价与起订量，请点击下方「咨询客服」。
+            </p>
+          </section>
+
+          {/* SKU 库存：一期平铺展示，无需选择；件数放大，克重只作参考 */}
+          <section className="mt-2 bg-white px-4 py-3.5">
+            <div className="mb-2.5 flex items-baseline justify-between">
+              <h2 className="text-[15px] font-semibold text-neutral-900">规格与库存</h2>
+              <span className="text-[11px] text-neutral-400">
+                {product.stockDisplayMode === 'EXACT' ? '单位：件' : '库存状态'}
+              </span>
+            </div>
+            <ul className="space-y-2">
+              {product.skus.map((sku) => {
+                const stock = skuStockDisplay(sku, product.stockDisplayMode, product.offSale)
+                const sub = [
+                  sku.refWeight ? `参考 ${sku.refWeight} g/件` : '',
+                  sku.availableWeight !== undefined ? `可售 ${fmtWeightShort(sku.availableWeight)}` : '',
+                  sku.skuCode,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')
+                return (
+                  <li
+                    key={sku.id}
+                    className="flex items-center justify-between rounded-lg bg-gold-50 px-3 py-2.5"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[13.5px] font-medium text-neutral-800">{sku.specName}</p>
+                      <p className="mt-0.5 truncate text-[11px] text-neutral-400">{sub}</p>
+                    </div>
+                    <div className={`ml-3 shrink-0 text-right leading-none ${TONE_TEXT[stock.tone]}`}>
+                      {stock.qty !== null ? (
+                        <>
+                          <span className="mr-1 text-[12px]">{stock.prefix}</span>
+                          <span className="text-[26px] font-semibold">{stock.qty}</span>
+                          <span className="ml-0.5 text-[13px]">件</span>
+                        </>
+                      ) : (
+                        <span className="text-[15px] font-semibold">{stock.word}</span>
+                      )}
+                    </div>
+                  </li>
+                )
+              })}
+              {product.skus.length === 0 && (
+                <li className="rounded-lg bg-neutral-50 py-6 text-center text-[13px] text-neutral-400">
+                  暂无可售规格
+                </li>
+              )}
+            </ul>
+            <p className="mt-2.5 text-[11px] leading-relaxed text-neutral-400">
+              参考单件克重与件数仅供估算，实际发货以复称克重为准。
             </p>
           </section>
 
@@ -174,50 +242,6 @@ export default function GoodsDetailPage() {
                 <AttrRow key={a.name} label={a.name} value={a.value} />
               ))}
             </dl>
-          </section>
-
-          {/* SKU 库存：一期平铺展示，无需选择 */}
-          <section className="mt-2 bg-white px-4 py-3.5">
-            <div className="mb-2.5 flex items-baseline justify-between">
-              <h2 className="text-[15px] font-semibold text-neutral-900">规格与库存</h2>
-              <span className="text-[11px] text-neutral-400">
-                {product.stockDisplayMode === 'EXACT' ? '单位：克（g）' : '库存状态'}
-              </span>
-            </div>
-            <ul className="space-y-2">
-              {product.skus.map((sku) => (
-                <li
-                  key={sku.id}
-                  className="flex items-center justify-between rounded-lg bg-neutral-50 px-3 py-2.5"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[13.5px] font-medium text-neutral-800">{sku.specName}</p>
-                    <p className="mt-0.5 truncate text-[11px] text-neutral-400">
-                      {sku.skuCode}
-                      {sku.refWeight ? ` · 参考 ${sku.refWeight} g/件` : ''}
-                      {typeof sku.availableQty === 'number' ? ` · 库存 ${sku.availableQty} 件` : ''}
-                    </p>
-                  </div>
-                  <div className="ml-3 shrink-0 text-right">
-                    {product.stockDisplayMode === 'EXACT' && sku.availableWeight !== undefined ? (
-                      <p className="text-[13.5px] font-semibold text-gold-700">
-                        {fmtWeight(sku.availableWeight)}
-                        <span className="ml-0.5 text-[11px] font-normal text-neutral-400">g</span>
-                      </p>
-                    ) : null}
-                    <StockBadge level={sku.level} className="mt-0.5" />
-                  </div>
-                </li>
-              ))}
-              {product.skus.length === 0 && (
-                <li className="rounded-lg bg-neutral-50 py-6 text-center text-[13px] text-neutral-400">
-                  暂无可售规格
-                </li>
-              )}
-            </ul>
-            <p className="mt-2.5 text-[11px] leading-relaxed text-neutral-400">
-              参考单件克重与件数仅供估算，实际发货以复称克重为准。
-            </p>
           </section>
 
           {/* 商品详情富文本 */}
@@ -247,13 +271,32 @@ export default function GoodsDetailPage() {
               <button
                 type="button"
                 onClick={consult}
-                className="h-11 flex-1 rounded-xl bg-gold-500 text-[15px] font-medium text-white active:bg-gold-600"
+                className={`h-11 flex-1 rounded-xl text-[15px] font-medium text-white ${
+                  mainActionLabel(product) ? 'bg-neutral-500 active:bg-neutral-600' : 'bg-gold-500 active:bg-gold-600'
+                }`}
               >
-                咨询客服 · 获取报价
+                {mainActionLabel(product) || '咨询客服 · 获取报价'}
               </button>
             </div>
           </div>
         </>
+      )}
+    </div>
+  )
+}
+
+function ProductStockBar({ product }: { product: MallProductDetail }) {
+  const stock = productStockDisplay(product)
+  return (
+    <div className={`mt-2 flex items-baseline gap-1 rounded-xl px-4 py-2.5 ${TONE_BG[stock.tone]} ${TONE_TEXT[stock.tone]}`}>
+      {stock.qty !== null ? (
+        <>
+          <span className="text-[13px]">{stock.prefix}</span>
+          <span className="text-[24px] font-semibold leading-none">{stock.qty}</span>
+          <span className="text-[13px]">件现货</span>
+        </>
+      ) : (
+        <span className="text-[15px] font-semibold">{stock.word}</span>
       )}
     </div>
   )
