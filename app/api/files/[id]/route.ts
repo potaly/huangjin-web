@@ -1,4 +1,4 @@
-// GET /api/files/{id} — 读取后台上传的图片
+// GET /api/files/{id} — 读取旧版存在 Redis 里的图片（只读兼容；新图片已存腾讯云 COS）
 import { readFile } from '@/lib/files'
 
 export const dynamic = 'force-dynamic'
