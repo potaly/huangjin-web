@@ -98,3 +98,60 @@ export async function sendSubscribeMessage(msg: SubscribeMessage): Promise<numbe
   }
   return -1
 }
+
+// ── 小程序码 ────────────────────────────────────────────────────
+
+/**
+ * 生成无数量限制的小程序码（getwxacodeunlimit）。
+ * 成功返回 PNG 二进制；失败返回 { errcode, errmsg }。
+ *
+ * 注意：微信要求 page 必须是「已发布」版本里存在的页面，否则返回 41030。
+ * 开发期把 WX_QRCODE_ENV 设成 trial / develop 可跳过该校验。
+ */
+export async function getUnlimitedQrCode(input: {
+  scene: string
+  page: string
+  width?: number
+}): Promise<{ png: Buffer } | { errcode: number; errmsg: string }> {
+  const envVersion = (process.env.WX_QRCODE_ENV?.trim() || 'release') as 'develop' | 'trial' | 'release'
+  const payload = {
+    scene: input.scene,
+    page: input.page,
+    width: input.width ?? 280,
+    // 非正式版时页面尚未发布，必须关掉路径校验，否则必然 41030
+    check_path: envVersion === 'release',
+    env_version: envVersion,
+  }
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const token = await getAccessToken(attempt > 0)
+    if (!token) return { errcode: -1, errmsg: '微信接口未配置或取 access_token 失败' }
+    try {
+      const res = await fetch(
+        `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${encodeURIComponent(token)}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          cache: 'no-store',
+        },
+      )
+      // 成功时微信直接回图片二进制，失败时回 JSON，靠 content-type 区分
+      const type = res.headers.get('content-type') ?? ''
+      if (type.includes('application/json')) {
+        const body = (await res.json()) as { errcode?: number; errmsg?: string }
+        const code = body.errcode ?? -1
+        if ((code === 40001 || code === 42001) && attempt === 0) continue
+        console.warn('[wechat] getwxacodeunlimit failed', code, body.errmsg)
+        return { errcode: code, errmsg: body.errmsg ?? '微信返回未知错误' }
+      }
+      const png = Buffer.from(await res.arrayBuffer())
+      if (!png.byteLength) return { errcode: -1, errmsg: '微信返回了空图片' }
+      return { png }
+    } catch (e) {
+      console.warn('[wechat] getwxacodeunlimit error', e)
+      return { errcode: -1, errmsg: '请求微信接口失败' }
+    }
+  }
+  return { errcode: -1, errmsg: '取 access_token 失败' }
+}
