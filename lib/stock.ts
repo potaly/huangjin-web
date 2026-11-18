@@ -34,12 +34,26 @@ export function stockLevelOf(sku: Sku): StockLevel {
   return 'ENOUGH'
 }
 
+/** 商城前台的库存等级：客户按件下单，可售克重不足一件时算售罄 */
+export function mallStockLevelOf(sku: Sku): StockLevel {
+  return availableQty(sku) === 0 ? 'SOLD_OUT' : stockLevelOf(sku)
+}
+
+function bestLevel(skus: Sku[], levelOf: (sku: Sku) => StockLevel): StockLevel {
+  const active = skus.filter((s) => s.status === 1)
+  if (active.some((s) => levelOf(s) === 'ENOUGH')) return 'ENOUGH'
+  if (active.some((s) => levelOf(s) === 'LOW')) return 'LOW'
+  return 'SOLD_OUT'
+}
+
 /** 商品维度的库存等级：取各启用 SKU 中最好的那一档 */
 export function productStockLevel(skus: Sku[]): StockLevel {
-  const active = skus.filter((s) => s.status === 1)
-  if (active.some((s) => stockLevelOf(s) === 'ENOUGH')) return 'ENOUGH'
-  if (active.some((s) => stockLevelOf(s) === 'LOW')) return 'LOW'
-  return 'SOLD_OUT'
+  return bestLevel(skus, stockLevelOf)
+}
+
+/** 商城前台的商品维度库存等级，口径同 mallStockLevelOf */
+export function mallProductStockLevel(skus: Sku[]): StockLevel {
+  return bestLevel(skus, mallStockLevelOf)
 }
 
 export interface StockChange {
