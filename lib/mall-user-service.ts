@@ -30,8 +30,9 @@ export function loginByPhone(db: DB, rawPhone: string, openid?: string): MallUse
   }
   if (openid) {
     const holders = db.mallUser.filter((o) => o.id !== user.id && o.openid === openid)
-    if (holders.some((o) => o.role === 'OWNER' || o.role === 'SALES')) {
-      throw bad('该微信已绑定管理账号，不能再绑定其他账号')
+    // 老板账号的微信不能被换走；业务员与客户之间允许同一微信切换（旧账号随之解绑）
+    if (holders.some((o) => o.role === 'OWNER')) {
+      throw bad('该微信已绑定老板账号，不能再绑定其他账号')
     }
     for (const other of holders) {
       other.openid = null

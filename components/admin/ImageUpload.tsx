@@ -4,30 +4,7 @@ import { useRef, useState } from 'react'
 import { api, errMsg } from '@/lib/client'
 import { useToast } from '@/components/ui-toast'
 import { Spinner } from '@/components/ui'
-
-/** 上传前在浏览器内压缩，控制在后端 600KB 限制内 */
-async function compress(file: File, maxSide = 1400, quality = 0.84): Promise<Blob> {
-  if (file.type === 'image/svg+xml' || file.type === 'image/gif') return file
-  const bitmap = await createImageBitmap(file).catch(() => null)
-  if (!bitmap) return file
-
-  const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height))
-  const w = Math.round(bitmap.width * scale)
-  const h = Math.round(bitmap.height * scale)
-
-  const canvas = document.createElement('canvas')
-  canvas.width = w
-  canvas.height = h
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return file
-  ctx.drawImage(bitmap, 0, 0, w, h)
-  bitmap.close()
-
-  const blob = await new Promise<Blob | null>((resolve) =>
-    canvas.toBlob(resolve, 'image/jpeg', quality),
-  )
-  return blob && blob.size < file.size ? blob : file
-}
+import { compressForUpload } from '@/lib/compress-image'
 
 export function ImageUpload({
   value,
@@ -49,14 +26,8 @@ export function ImageUpload({
   const pick = async (file: File) => {
     setBusy(true)
     try {
-      const blob = await compress(file)
       const form = new FormData()
-      form.append(
-        'file',
-        new File([blob], file.name.replace(/\.[^.]+$/, blob.type === 'image/jpeg' ? '.jpg' : ''), {
-          type: blob.type || file.type,
-        }),
-      )
+      form.append('file', await compressForUpload(file))
       const res = await api.upload<{ url: string }>('/api/admin/upload', form)
       onChange(res.url)
       toast.success('上传成功')

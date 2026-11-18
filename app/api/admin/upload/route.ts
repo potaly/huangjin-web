@@ -1,4 +1,4 @@
-// POST /api/admin/upload — 图片上传（替代 §7.2 的 /files/oss-policy）
+// POST /api/admin/upload — 图片上传，服务端转存腾讯云 COS，返回完整 https 地址
 import { bad, handle, ok, requireAdmin } from '@/lib/api'
 import { MAX_FILE_BYTES, saveFile } from '@/lib/files'
 
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     const buffer = Buffer.from(await entry.arrayBuffer())
     try {
       const file = await saveFile({ mime: entry.type, buffer, name: entry.name })
-      return ok({ url: `/api/files/${file.id}`, size: file.size, mime: file.mime }, '上传成功')
+      return ok({ url: file.url, size: file.size, mime: file.mime }, '上传成功')
     } catch (e) {
       throw bad(e instanceof Error ? e.message : '上传失败')
     }

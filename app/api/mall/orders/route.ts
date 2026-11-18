@@ -4,6 +4,7 @@ import { handle, ok, readJson } from '@/lib/api'
 import { loadDB, mutate } from '@/lib/store'
 import { requireMallUser } from '@/lib/mall-auth'
 import { orderView, placeOrder, visibleOrders, type PlaceOrderInput } from '@/lib/order-service'
+import { notifyNewOrder, orderNotifyTargets } from '@/lib/order-notify'
 import type { OrderStatus } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -21,10 +22,16 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   return handle(async () => {
     const input = await readJson<PlaceOrderInput>(req)
-    const view = await mutate((db) => {
+    const { order, targets } = await mutate((db) => {
       const user = requireMallUser(db, ['CUSTOMER'])
-      return orderView(placeOrder(db, user, input))
+      const before = db.order.length
+      const order = placeOrder(db, user, input)
+      // 重复提交返回的是旧单，不再通知
+      const created = db.order.length > before
+      return { order, targets: created ? orderNotifyTargets(db, order) : [] }
     })
+    await notifyNewOrder(order, targets)
+    const view = orderView(order)
     return ok(view, '订单已提交')
   })
 }

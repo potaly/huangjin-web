@@ -1,4 +1,4 @@
-// POST /api/mall/manage/upload — 小程序上传商品图（multipart，字段 file）
+// POST /api/mall/manage/upload — 小程序上传商品图（multipart，字段 file），服务端转存腾讯云 COS
 import { bad, handle, ok } from '@/lib/api'
 import { MAX_FILE_BYTES, saveFile, sniffImageMime } from '@/lib/files'
 import { MANAGE_ROLES, requireMallUser } from '@/lib/mall-auth'
@@ -28,7 +28,11 @@ export async function POST(req: Request) {
     const mime = sniffImageMime(buffer)
     if (!mime) throw bad('只支持 JPG / PNG / WEBP 图片')
 
-    const file = await saveFile({ mime, buffer, name: entry.name })
-    return ok({ url: `/api/files/${file.id}`, size: file.size, mime: file.mime }, '上传成功')
+    try {
+      const file = await saveFile({ mime, buffer, name: entry.name })
+      return ok({ url: file.url, size: file.size, mime: file.mime }, '上传成功')
+    } catch (e) {
+      throw bad(e instanceof Error ? e.message : '上传失败')
+    }
   })
 }

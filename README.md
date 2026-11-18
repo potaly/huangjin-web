@@ -121,6 +121,9 @@ node scripts/gen-images.mjs   # 重新生成 public/img 下的占位图
 | `UPSTASH_REDIS_REST_URL` | 否 | Upstash Redis REST 地址；不配置则使用内存存储 |
 | `UPSTASH_REDIS_REST_TOKEN` | 否 | Upstash Redis REST Token |
 | `KV_REST_API_URL` / `KV_REST_API_TOKEN` | 否 | Vercel KV 的等价变量名，同样被支持 |
+| `TENCENT_COS_SECRET_ID` / `TENCENT_COS_SECRET_KEY` | 线上必填 | 腾讯云 COS 子账号密钥（只授权 `huangjin/*`）；连了 Redis 却没配 COS 时上传会报错 |
+| `TENCENT_COS_BUCKET` / `TENCENT_COS_REGION` | 线上必填 | `huangjin-1259254304` / `ap-guangzhou` |
+| `TENCENT_COS_PUBLIC_URL` / `TENCENT_COS_PREFIX` | 否 | 图片访问域名（默认桶默认域名）/ key 前缀（默认 `huangjin/`） |
 | `INIT_ADMIN_USERNAME` | 否 | 初始超管用户名，默认 `admin` |
 | `INIT_ADMIN_PASSWORD` | 否 | 初始超管密码，默认 `admin123456` |
 
@@ -136,7 +139,7 @@ node scripts/gen-images.mjs   # 重新生成 public/img 下的占位图
 
 整库以单个 JSON 文档存放在 Redis 的 `huangjin:db` 键下，写操作通过 Redis 分布式锁（`SET NX PX`）串行化。一期数据量小（商品、SKU、公告、轮播、参数），这个方案足够且便于迁移 —— 后续量级上来后可按表拆键或迁移到 Postgres，只需替换 `lib/store.ts`。
 
-图片单独存放在 `huangjin:file:{id}` 键下，通过 `/api/files/{id}` 读取，不混进整库文档；接入阿里云 OSS 时只需替换 `lib/files.ts`。
+图片存腾讯云 COS（`lib/cos.ts`、`lib/files.ts`），对象 key 为 `huangjin/uploads/{年月}/{随机}.jpg`，数据库只存完整 https 地址。上传前在浏览器 / 小程序端压缩到长边 1280px、JPEG 质量 0.8（一般 150–350KB，上限 600KB）。早期图片以 base64 存在 Redis 的 `huangjin:file:{id}` 键下，`/api/files/{id}` 保留只读兼容；用 `scripts/migrate-images-to-cos.ts` 搬到 COS 并改写数据库地址。
 
 ## 接口
 
@@ -198,7 +201,8 @@ huangjin-web/
 │   ├── mall.ts              # 前台视图模型（不含价格字段）
 │   ├── product-service.ts   # 商品 + SKU 写入
 │   ├── sanitize.ts          # 富文本白名单过滤
-│   └── files.ts             # 图片存储
+│   ├── cos.ts               # 腾讯云 COS 签名与上传
+│   └── files.ts             # 图片存储（COS；旧图 Redis 只读）
 ├── scripts/gen-images.mjs   # 生成 public/img 下的 SVG 占位图
 └── public/img/              # 商品图、分类图标、轮播图、二维码（均为本地 SVG）
 ```

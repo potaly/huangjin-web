@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { api, errMsg } from '@/lib/client'
 import { useToast } from '@/components/Toast'
+import { compressForUpload } from '@/lib/compress-image'
 
 /**
  * 轻量富文本编辑器（contenteditable + execCommand）
@@ -41,7 +42,7 @@ export function RichEditor({
     setUploading(true)
     try {
       const form = new FormData()
-      form.append('file', file)
+      form.append('file', await compressForUpload(file))
       const res = await api.upload<{ url: string }>('/api/admin/upload', form)
       exec('insertHTML', `<img src="${res.url}" alt="" />`)
     } catch (e) {

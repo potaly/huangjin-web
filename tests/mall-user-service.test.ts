@@ -113,13 +113,28 @@ test('管理账号未绑定微信：手机号登录可首次绑定', () => {
   assert.equal(owner.openid, 'wx9')
 })
 
-test('微信已绑定管理账号时，不能被其他账号抢绑', () => {
+test('微信已绑定老板账号时，不能改绑其他账号', () => {
   const db = emptyDB()
-  const sales = addUser(db, { phone: '13800000011', role: 'SALES', openid: 'wxs' })
+  const owner = addUser(db, { phone: '13800000000', role: 'OWNER', openid: 'wxo' })
   const c = addUser(db, { phone: '13800000021', role: 'CUSTOMER' })
-  assert.throws(() => loginByPhone(db, '13800000021', 'wxs'), /已绑定管理账号/)
-  assert.equal(sales.openid, 'wxs')
+  assert.throws(() => loginByPhone(db, '13800000021', 'wxo'), /已绑定老板账号/)
+  assert.equal(owner.openid, 'wxo')
   assert.equal(c.openid, null)
+})
+
+test('同一微信可在业务员与客户账号之间切换，旧账号解绑', () => {
+  const db = emptyDB()
+  const sales = addUser(db, { phone: '13800000011', role: 'SALES' })
+  const c = addUser(db, { phone: '13800000021', role: 'CUSTOMER', openid: 'wx1' })
+  loginByPhone(db, '13800000011', 'wx1')
+  assert.equal(sales.openid, 'wx1')
+  assert.equal(c.openid, null)
+  loginByPhone(db, '13800000021', 'wx1')
+  assert.equal(c.openid, 'wx1')
+  assert.equal(sales.openid, null)
+  // 别人的微信仍不能登录已绑定的业务员账号
+  loginByPhone(db, '13800000011', 'wx1')
+  assert.throws(() => loginByPhone(db, '13800000011', 'wx2'), /已绑定微信/)
 })
 
 test('修改手机号会解绑微信', () => {
